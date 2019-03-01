@@ -1,0 +1,31 @@
+.clickVerificationCode {
+    padding: 0 10px;
+    height: 36px;
+    line-height: 30px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #666;
+    background-color: #ddd;
+}
+
+.form-horizontal .col-md-2 label.control-label {
+    padding: 0;
+    font-weight: normal;
+    font-size: 18px;
+    font-weight: bold;
+    color: #4c4c4c;
+    height: 40px;
+    line-height: 40px;
+}
+
+.message {
+    width: 221px;
+    background: #ffebeb;
+    color: #e4393c;
+    border: 1px solid #faccc6;
+    text-align: center;
+    line-height: 1.5em;
+    height: auto;
+    margin-bottom: 20px;
+}

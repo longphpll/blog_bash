@@ -1,0 +1,82 @@
+{{extend name="public/base"}}
+
+{{block name="main"}}
+
+<div class="col-md-8">
+    {{//图片轮播}}
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            {{volist name="slide" id="vo"}}
+            <li data-target="#carousel-example-generic" data-slide-to="{{$key}}"
+                class="{{if condition='$key==0'}}active{{/if}}"></li>
+            {{/volist}}
+        </ol>
+        <div class="carousel-inner" role="listbox">
+            {{volist name="slide" id="vo"}}
+            <div class="item {{if condition='$key == 0'}}active{{/if}}">
+                <a href="{{:url('index/news/view',['id'=>$vo.id])}}">
+                    <img src="__STATIC__/upload/{{$vo.image}}" alt="{{$vo.title}}" style="width:100%;height:413px;">
+                </a>
+            </div>
+            {{/volist}}
+        </div>
+        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">上一张</span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">下一张</span>
+        </a>
+    </div>
+</div>
+
+<div class="col-md-4">
+    {{//推荐新闻}}
+    <div class="panel panel-info" style="height: 413px">
+        <div class="panel-body" style="padding:0;">
+            <ul class="list-group" style="margin-bottom:0;">
+                {{volist name="recommend" id="vo"}}
+                <li class="list-group-item">
+                    <a href="{{:url('index/news/view',['id'=>$vo.id])}}">
+                        {{$vo.title|mb_substr=0,18}}
+                    </a>
+                </li>
+                {{/volist}}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{{volist name="subs" id="vo"}}
+<div class="col-md-6">
+    {{//}}
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a href="{{:url('index/category/view',['id'=>$vo.id])}}">
+                <h3 class="panel-title">{{$vo.title}}</h3>
+            </a>
+        </div>
+        <div class="panel-body" style="padding:0;height: 400px;">
+            <ul class="list-group" style="margin-bottom:0;">
+                {{volist name="news[$vo.id]" id="vvo" empty="没有数据"}}
+                <li class="list-group-item">
+                    <a href="{{:url('index/news/view',['id'=>$vvo.id])}}">
+                        {{$vvo.title|mb_substr=0,30}}
+                    </a>
+                </li>
+                {{/volist}}
+            </ul>
+        </div>
+    </div>
+</div>
+{{/volist}}
+
+{{/block}}
+
+
+
+
+
+
+

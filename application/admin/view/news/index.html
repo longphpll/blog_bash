@@ -1,0 +1,91 @@
+{{extend name="public/base"}}
+
+{{block name="main"}}
+<h1 class="bg-success text-center text-primary">新闻列表</h1>
+
+{{//新闻搜索按钮}}
+<form id="searchForm" class="form-inline">
+    <div class="form-group">
+        <label class="sr-only">标题:</label>
+        <input type="text" name="title" value="{{:input('param.title')}}" class="form-control" placeholder="新闻标题">
+    </div>
+
+    <div class="form-group">
+        <label class="sr-only">是否推荐:</label>
+        <select name="recommend" class="form-control">
+            <option value="">是否推荐</option>
+            <option value="1" {{if condition="input('param.recommend/d') ===1"}}selected="selected"{{/if}}>已推荐</option>
+            <option value="0" {{if condition="input('param.recommend/d') ===0"}}selected="selected"{{/if}}>未推荐</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <input type="button" id="doSearch" value="搜索" class="btn btn-primary">
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover table-condensed">
+        <tr>
+            <th>ID</th>
+            <th>标题</th>
+            <th>作者</th>
+            <th>分类</th>
+            <th>是否推荐</th>
+            <th>是否上线</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+
+        {{volist name="list" id="vo"}}
+        <tr>
+            <td>{{$vo.id}}</td>
+            <td>{{$vo.title}}</td>
+            <td>{{$vo:author:username}}</td>
+            <td>{{$vo:category:title}}</td>
+            <td>{{$vo.recommend}}</td>
+            <td>{{$vo.online}}</td>
+            <td>{{$vo.created}}</td>
+            <td>
+                <a href="{{:url('index/news/view',['id'=>$vo.id])}}" target="_blank" class="btn btn-success">
+                    查看
+                </a>
+                <a href="{{:url('admin/news/edit',['id'=>$vo.id])}}" class="btn btn-info">
+                    编辑
+                </a>
+                <a href="{{:url('admin/news/delete',['id'=>$vo.id])}}"
+                   onclick="return confirm('请确认是否删除')"
+                   class="btn btn-danger">
+                    删除
+                </a>
+            </td>
+        </tr>
+        {{/volist}}
+    </table>
+    {{$list->render()}}
+</div>
+{{/block}}
+
+{{block name="js"}}
+<script type="text/javascript">
+    //1.单击搜索按钮,提交表单
+    $('#doSearch').click(function () {
+        //2.接收表单数据 表单对象.serialize()
+        var query = $('#searchForm').serialize(); //title=6&online=1
+        var args = query.split('&');//args = ['title=6','online=1']
+
+        var target = '';
+        for (var i = 0; i < args.length; i++) {
+            var arg = args[i].split('=');
+            if (arg[1] != '') {
+                //拼接单个参数 /title/6
+                target += '/' + arg[0] + '/' + arg[1];
+            }
+        }
+        // console.log(target); //   /title/6/online/1/recommend/0
+        var url = "{{:url('admin/news/index')}}".replace('.html','')+target;
+        //http://localhost/18_news/tp5/public/admin/news/index/title/6/online/1/recommend/0
+        location.href = url;
+    })
+</script>
+{{/block}}

@@ -1,0 +1,100 @@
+{{extend name="public/base"}}
+
+{{block name="main"}}
+<div class="col-md-12">
+    <h1 class="text-info bg-success text-center">添加管理员</h1>
+    <form action="{{:url('admin/admin/doRegister')}}" method="post" class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">用户名:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="username" id="username" value="" class="form-control">
+            </div>
+            <div class="col-md-5">
+                <span class="help-block">请输入用户名</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">密码:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="password" name="pwd" id="pwd" value="" class="form-control">
+            </div>
+            <div class="col-md-5"><span class="help-block">请输入密码</span></div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">确认密码:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="password" name="repwd" id="repwd" value="" class="form-control">
+            </div>
+            <div class="col-md-5"><span class="help-block">确保两次输入的密码一致</span></div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">邮箱:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="email" id="email" value="" class="form-control">
+            </div>
+            <div class="col-md-5">
+                <span class="help-block">请输入邮箱</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">手机号:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="phone" id="phone" value="" class="form-control">
+            </div>
+            <div class="col-md-5">
+                <span class="help-block">请输入手机号</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">验证码:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="captcha" value="" class="form-control">
+            </div>
+            <div class="col-md-5">
+                <img src="{{:captcha_src()}}" alt="captcha" id="captcha" onclick="refresh()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-2">
+                <input type="submit" value="注册" class="btn btn-primary">
+                <input type="reset" vale="重置" class="btn btn-default">
+            </div>
+        </div>
+    </form>
+</div>
+{{/block}}
+
+{{block name="js"}}
+<script type="text/javascript">
+    //方式一:
+    function refresh() {
+        $('#captcha').prop('src', "{{:captcha_src()}}?rand=" + Math.random());
+    }
+
+    //方式二:
+    //就绪函数
+    $(function () {
+        //选中对象,然后触发单击事件
+        $('#captcha').click(function () {
+            $(this).attr('src', "{{:captcha_src()}}?rand=" + Math.random());
+        });
+    });
+</script>
+{{/block}}
+
+
+

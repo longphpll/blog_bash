@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>新闻世界管理后台</title>
+    <link rel="stylesheet" href="../../../../public/static/css/signin.css">
+    {{load file="__STATIC__/bootstrap/css/bootstrap.css"}}
+    {{load file="__CSS__/signin.css"}}
+</head>
+
+<body>
+<div class="container">
+    <form action="{{:url('admin/admin/doLogin')}}" method="post" class="form-signin">
+        <h2 class="form-signin-heading text-center">Welcome</h2>
+
+        <label for="username" class="sr-only">用户名</label>
+        <input type="text" name="username" id="username" class="form-control" placeholder="请输入用户名" required autofocus>
+
+        <label for="pwd" class="sr-only">密码</label>
+        <input type="password" name="pwd" id="pwd" class="form-control" placeholder="请输入密码" required>
+
+        <label for="inputCaptcha" class="sr-only">请输入验证码</label>
+        <input type="text" name="captcha" id="inputCaptcha" class="form-control" placeholder="请输入验证码" required
+               autocomplete="off">
+        <img src="{{:captcha_src()}}" alt="验证码" id="captcha" style="width:100%">
+
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me">记住我
+            </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">登陆</button>
+    </form>
+</div>
+
+{{load file="__JS__/jquery-3.3.1.js"}}
+{{load file="__STATIC__/bootstrap/js/bootstrap.js"}}
+
+{{//刷新验证码}}
+<script type="text/javascript">
+    //方式一:JS
+    //1.获取 DOM 对象
+    var c = document.getElementById('captcha');
+    //2.事件触发
+    c.onclick = function () {
+        this.src = '{{:captcha_src()}}?rand=' + Math.random();
+    }
+
+    //方式二:jQuery
+    $(function () {
+        //选中对象,然后触发单击事件
+        $('#captcha').click(function () {
+            $(this).attr('src', "{{:captcha_src()}}?rand=" + Math.random());
+        });
+    });
+</script>
+
+</body>
+</html>

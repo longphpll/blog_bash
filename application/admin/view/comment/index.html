@@ -1,0 +1,97 @@
+{{extend name="public/base"}}
+
+{{block name="main"}}
+<h1 class="bg-success text-center text-primary">评论列表</h1>
+{{//评论管理的搜索}}
+<form id="searchForm" class="form-inline">
+    <div class="form-group">
+        <label class="sr-only">标题:</label>
+        <input type="text" name="title" value="{{:input('param.title')}}" class="form-control" placeholder="标题">
+    </div>
+    <div class="form-group">
+        <label class="sr-only">评论内容:</label>
+        <input type="text" name="content" value="{{:input('param.content')}}" class="form-control" placeholder="评论内容">
+    </div>
+    <div class="form-group">
+        <!--<input type="button" id="doSearch" value="搜索" class="btn btn-primary">-->
+        <input type="submit" id="doSearch" value="搜索" class="btn btn-primary">
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-condensed table-hover table-striped ">
+        <tr>
+            <th class="text-center">ID</th>
+            <th class="text-center">作者</th>
+            <th class="text-center">所属类型</th>
+            <th class="text-center">标题</th>
+            <th class="text-center">评论内容</th>
+            <th class="text-center">创建时间</th>
+            <th class="text-center">操作菜单</th>
+        </tr>
+        {{volist name="list" id="vo"}}
+        <tr>
+            <td>{{$vo.id}}</td>
+            <td>{{$vo->author->phone}}</td>
+            <td>{{$vo.comment_type}}</td>
+            <td>{{$vo->target->title}}</td>
+            <td>{{$vo.content|mb_substr=0,10}}</td>
+            <td>{{$vo.created}}</td>
+            <td>
+                <a href="{{:url('admin/comment/delete',['id'=>$vo.id])}}" class="btn btn-danger"
+                   onclick="return confirm('请确认删除')">
+                    删除
+                </a>
+            </td>
+        </tr>
+        {{/volist}}
+    </table>
+    {{$list->render()}}
+</div>
+{{/block}}
+
+{{block name="js"}}
+<script type="text/javascript">
+
+    //方式二：通过框架自带 paginate() 方法实现
+    //注意表单提交方式为 submit
+
+//     $('document').ready(function () {
+//         $('#doSearch').click(function () {
+//             var data = $('#searchForm').serialize();
+//             //console.log(data);
+//             //comment_id=username&content=tom
+//
+//             var arr = data.split('&');
+//             //["comment_id=username", "content=tom"]
+//             var target = '';
+//             $.each(arr, function (index, value) {
+//                 // console.log(index);//0 1
+//                 //console.log(value);
+//                 //comment_id=username
+//                 //content=tom
+//
+//                 var args = value.split('=');
+//                 //console.log(args);
+//                 //["comment_id", "username"]
+//                 //["content", "tom"]
+//
+//                 if (args[1] != '') {
+//                     target += '/' + args[0] + '/' + args[1];
+//                 }
+//             })
+//             //console.log(target);
+//             // /comment_id/username/content/tom
+//
+//             var url = "{{:url('admin/comment/index')}}" + target;
+//             console.log(url);
+// // /18_news/tp5/public/admin/comment/index.html/comment_id/username/content/tom
+//
+//             //去掉 .html
+//             var newUrl = url.replace('.html', '');
+//             console.log(newUrl);
+//             location.href = newUrl;
+//         });
+//     });
+</script>
+{{/block}}

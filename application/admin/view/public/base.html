@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{block name="title"}}新闻世界管理后台{{/block}}</title>
+    {{load file="__STATIC__/bootstrap/css/bootstrap.css"}}
+    {{load file="__CSS__/dashboard.css"}}
+    {{block name="css"}}{{/block}}
+</head>
+
+<body>
+
+{{include file="public/topnav"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar" style="padding:0">
+            {{include file="public/leftnav"}}
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {{block name="main"}} {{/block}}
+        </div>
+    </div>
+</div>
+
+{{load file="__JS__/jquery-3.3.1.js"}}
+{{load file="__STATIC__/bootstrap/js/bootstrap.js"}}
+
+{{block name="js"}} {{/block}}
+</body>
+</html>

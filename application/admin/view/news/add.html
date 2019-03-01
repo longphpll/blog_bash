@@ -1,0 +1,97 @@
+{{extend name="public/base"}}
+
+{{block name="main"}}
+<h1 class="text-success">添加新闻</h1>
+<form action="{{:url('admin/news/doAdd')}}" method="post" enctype="multipart/form-data" class="form-horizontal">
+    <div class="form-group">
+        <div class="col-md-2">
+            <label class="control-label">所属分类:</label>
+        </div>
+        <div class="col-md-5">
+            <select name="cid" class="form-control">
+                {{volist name="cs" id="vo"}}
+                <option value="{{$vo.id}}">{{:str_repeat('--',$vo.level)}}{{$vo.title}}</option>
+                {{/volist}}
+            </select>
+        </div>
+        <div class="col-md-5">
+            <span class="help-block">请选择所属分类</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-2">
+            <label class="control-label">标题:</label>
+        </div>
+        <div class="col-md-5">
+            <input type="text" name="title" value="" class="form-control">
+        </div>
+        <div class="col-md-5">
+            <span class="help-block">请输入新闻标题,最多不超过100个字符</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-2">
+            <label class="control-label">图片:</label>
+        </div>
+        <div class="col-md-5">
+            <input type="file" name="image" value="" class="form-control">
+        </div>
+        <div class="col-md-5">
+            <span class="help-block">请上传图片</span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-2">
+            <label class="control-label">内容:</label>
+        </div>
+        <div class="col-md-5">
+            <textarea name="content" cols="30" rows="5"  id="ueditor"></textarea>
+        </div>
+        <div class="col-md-5"><span class="help-block">请输入新闻内容</span></div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-2">
+            <label class="control-label">是否推荐:</label>
+        </div>
+        <div class="col-md-5">
+            <input type="checkbox" name="recommend" value="1">推荐
+        </div>
+        <div class="col-md-5">
+            <span class="help-block"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-2">
+            <label class="control-label">是否上线:</label>
+        </div>
+        <div class="col-md-5">
+            <input type="checkbox" name="online" value="1" checked="checked">上线
+        </div>
+        <div class="col-md-5">
+            <span class="help-block"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-10 col-md-offset-2">
+            <!--<input type="hidden" name="_method" value="PUT">-->
+
+            <input type="submit" value="提交" class="btn btn-primary">
+            <input type="reset" vale="重置" class="btn btn-default">
+        </div>
+    </div>
+</form>
+{{/block}}
+
+{{block name="js"}}
+{{load file="__STATIC__/ueditor/ueditor.config.js"}}
+{{load file="__STATIC__/ueditor/ueditor.all.js"}}
+<script type="text/javascript">
+    var ue = UE.getEditor('ueditor');
+</script>
+{{/block}}

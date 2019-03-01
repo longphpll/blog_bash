@@ -1,0 +1,47 @@
+{{extend name="public/base"}}
+
+{{block name="main"}}
+<h1 class="bg-info text-center">编辑用户</h1>
+<div class="table-responsive">
+    <form action="{{:url('admin/admin/doEdit')}}" method="post">
+        <table class="table table-bordered table-condensed table-hover table-striped">
+            <tr>
+                <td>用户名</td>
+                <td><input type="text" name="username" value="{{$detail->username}}"></td>
+            </tr>
+            <tr>
+                <td>是否是管理员</td>
+                <td><input type="checkbox" name="admin" value="1" {{if condition="$detail->getData('admin')"}}checked{{/if}}>是</td>
+            </tr>
+            <tr>
+                <td>密码</td>
+                <td><input type="password" name="pwd" placeholder="请输入新密码"></td>
+            </tr>
+            <tr>
+                <td>确认密码</td>
+                <td><input type="password" name="repwd" placeholder="请确认密码"></td>
+            </tr>
+            <tr>
+                <td>邮箱</td>
+                <td><input type="text" name="email" value="{{$detail->email}}"></td>
+            </tr>
+            <tr>
+                <td>电话</td>
+                <td><input type="text" name="phone" value="{{$detail->phone}}"></td>
+            </tr>
+            <tr>
+                <td>余额</td>
+                <td><input type="text" name="balance" value="{{$detail->balance}}"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="hidden" name="id" value="{{$detail->id}}">
+                    <button class="btn btn-primary">提交</button>
+                    <input type="reset" value="重置" class="btn btn-primary">
+                </td>
+            </tr>
+        </table>
+
+    </form>
+</div>
+{{/block}}

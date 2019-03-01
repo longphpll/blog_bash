@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+    {{load file="__STATIC__/bootstrap/css/bootstrap.css"}}
+</head>
+
+<body>
+<div class="container">
+    <div class="table-responsive">
+        <h1 class="bg-success text-center">用户列表</h1>
+        <table class="table table-bordered table-condensed table-hover table-striped">
+            <tr>
+                <th class="text-center">ID</th>
+                <th class="text-center">用户名</th>
+                <th class="text-center">创建时间</th>
+                <th class="text-center">操作菜单</th>
+            </tr>
+            {{volist name="list" id="vo"}}
+            <tr>
+                <td>[{{$key}}]{{$vo['id']}}</td>
+                <td>{{$vo.username}}</td>
+                <td>{{$vo.created|date="Y-m-d H:i:s",###}}</td>
+                <td>
+                    <a href="#" class="btn btn-primary">查看</a>
+                    <a href="#" class="btn btn-info">编辑</a>
+                    <!--<a href="{{:url('index/user/delete',['id'=>$vo.id])}}" class="btn btn-danger">删除</a>-->
+                    <a href="{{:url('index/user/delete','id='.$vo.id)}}" class="btn btn-danger">删除</a>
+                </td>
+            </tr>
+            {{/volist}}
+        </table>
+    </div>
+</div>
+
+{{load file="__JS__/jquery-3.3.1.js"}}
+{{load file="__STATIC__/bootstrap/js/bootstrap.js"}}
+</body>
+
+</html>

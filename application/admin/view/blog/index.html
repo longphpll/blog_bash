@@ -1,0 +1,92 @@
+{{extend name="public/base"}}
+
+{{block name="main"}}
+<!--该用户的博客详情-->
+<h1 class="bg-success text-center text-primary">博客列表</h1>
+<form id="searchForm" class="form-inline">
+    <div class="form-group">
+        <label class="sr-only">标题:</label>
+        <input type="text" name="title" value="{{:input('param.title')}}" class="form-control" placeholder="博客标题">
+    </div>
+    <div class="form-group">
+        <label class="sr-only">作者:</label>
+        <input type="text" name="phone" value="{{:input('param.phone')}}" class="form-control" placeholder="作者">
+    </div>
+    <div class="form-group">
+        <input type="button" id="doSearch" value="搜索" class="btn btn-primary">
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-condensed table-hover table-striped ">
+        <tr>
+            <th>ID</th>
+            <th>标题</th>
+            <th>作者</th>
+            <th>浏览量</th>
+            <th>创建时间</th>
+            <th>操作菜单</th>
+        </tr>
+        {{volist name="list" id="vo"}}
+        <tr style="text-align: center">
+            <td>{{$vo.id}}</td>
+            <td>{{$vo.title|mb_substr=0,10}}</td>
+            <td>{{$vo->author->phone}}</td>
+            <td>{{$vo:view}}</td>
+            <td>{{$vo->created}}</td>
+            <td>
+                <a href="" target="_blank" class="btn btn-success">
+                    查看
+                </a>
+                <a href="{{:url('admin/blog/edit',['id'=>$vo.id])}}" class="btn btn-info">
+                    编辑
+                </a>
+                <a href="{{:url('admin/blog/delete',['id'=>$vo.id])}}"
+                   onclick="return confirm('请确认是否删除')"
+                   class="btn btn-danger">
+                    删除
+                </a>
+            </td>
+        </tr>
+        {{/volist}}
+    </table>
+    {{$list->render()}}
+
+</div>
+{{/block}}
+{{block name="js"}}
+<script type="text/javascript">
+    $(function () {
+        $('#doSearch').click(function () {
+            var data = $('#searchForm').serialize();
+            //console.log(data);//title=biaot&author=tom
+
+            var arr = data.split('&');
+            //console.log(arr);//(2) ["title=biao", "author=tom"]
+
+            var target = '';
+            for (var i = 0; i < arr.length; i++) {
+                var arg = arr[i].split('=');
+                // console.log(arg);
+                // ["title", "biao"]
+                // ["author", "tom"]
+                if (arg[1] != '') {
+                    target += '/' + arg[0] + '/' + arg[1];
+                    // console.log(target);
+                    //   /title/biao
+                    //   /author/tom
+                }
+            }
+            var url = "{{:url('admin/blog/index')}}" + target;
+            console.log(url);
+//  /18_news/tp5/public/admin/blog/index.html/title/biao/author/tom
+
+            //要将 .html 去掉
+            var newUrl = url.replace('.html', '');
+            console.log(newUrl);
+// /18_news/tp5/public/admin/blog/index/title/biao/author/tom
+            location.href = newUrl;
+        });
+    });
+</script>
+{{/block}}

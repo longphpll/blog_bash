@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {{//去除html缓存实时加载css文件}}
+    <meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta HTTP-EQUIV="Cache-Control" CONTENT="no-store, must-revalidate">
+    <meta HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT">
+    <meta HTTP-EQUIV="expires" CONTENT="0">
+
+    <title>{{block name="title"}}{{/block}}</title>
+    {{load file="__STATIC__/bootstrap/css/bootstrap.css"}}
+    {{block name="css"}}{{/block}}
+</head>
+
+<body>
+
+<div class="container">
+    {{include file="public/header"}}
+
+    <div class="row">
+        {{block name="left"}}{{/block}}
+
+        {{block name="main"}}主内容{{/block}}
+
+        {{block name="right"}} {{/block}}
+
+    </div>
+    {{include file="public/footer"}}
+</div>
+
+{{load file="__JS__/jquery-3.3.1.js"}}
+{{load file="__STATIC__/bootstrap/js/bootstrap.js"}}
+
+{{block name="js"}}{{/block}}
+{{//首页查询域名是否可以}}
+<script type="text/javascript">
+    //当用户点击 查询按钮时
+    $('#checkDomain').click(function () {
+        var domainVal = document.getElementById('domain').value;
+
+        $.ajax({
+            type: 'post',
+            url: "{{:url('api/api/domain')}}",
+            data: $('form').serialize(),//表单序列化
+            success: function (res) {
+                var obj = $.parseJSON(res); //由JSON字符串转换为JSON对象
+
+                if (obj.code == 1) {
+                    alert('域名' + ' ' + obj.key + ' ' + obj.message);
+                } else if (obj.code == 0) {
+                    alert('域名' + ' ' + obj.key + ' ' + obj.message);
+                }
+            },
+            error: function () {
+                alert('非常抱歉,服务器出现异常情况,暂时无法登录,给您带来不便,敬请谅解!');
+            }
+        });
+    });
+
+</script>
+</body>
+
+</html>

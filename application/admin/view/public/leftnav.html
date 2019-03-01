@@ -1,0 +1,99 @@
+﻿<div class="panel-group" id="pgroup">
+    <div class="panel {{if condition='$Request.controller == " Blog
+    "'}}panel-success{{else /}}panel-info{{/if}}">
+    <div class="panel-heading">
+        <a href="#blog" data-toggle="collapse" data-parent="#pgroup">
+            <h3 class="panel-title">博客管理</h3>
+        </a>
+    </div>
+    <div id="blog" class="collapse {{if condition='$Request.controller == " Blog
+    "'}}in{{/if}}">
+    <div class="panel-body" style="padding:0;">
+        <ul class="list-group" style="margin-bottom:0;">
+            <li class="list-group-item">
+                <a href="{{:url('admin/blog/index')}}">博客列表</a>
+            </li>
+            <!--<li class="list-group-item">-->
+            <!--<a href="{{:url('index/blog/add')}}">添加博客</a>-->
+            <!--</li>-->
+        </ul>
+    </div>
+</div>
+</div>
+<div class="panel {{if condition='$Request.controller == " User"'}}panel-success{{else /}}panel-info{{/if}}">
+<div class="panel-heading">
+    <a href="#user" data-toggle="collapse" data-parent="#pgroup">
+        <h3 class="panel-title">用户管理</h3>
+    </a>
+</div>
+<div id="user" class="collapse {{if condition='$Request.controller == " Admin"'}}in{{/if}}">
+<div class="panel-body" style="padding:0;">
+    <ul class="list-group" style="margin-bottom:0;">
+        <li class="list-group-item">
+            <a href="{{:url('admin/admin/index')}}" onclick="getNew()">用户列表</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{{:url('admin/admin/register')}}">添加管理员</a>
+        </li>
+    </ul>
+</div>
+</div>
+</div>
+
+<div class="panel {{if condition='$Request.controller == " Comment"'}}panel-success{{else /}}panel-info{{/if}}">
+<div class="panel-heading">
+    <a href="#comment" data-toggle="collapse" data-parent="#pgroup">
+        <h3 class="panel-title">评论管理</h3>
+    </a>
+</div>
+<div id="comment" class="collapse {{if condition='$Request.controller == " Comment"'}}in{{/if}}">
+<div class="panel-body" style="padding:0;">
+    <ul class="list-group" style="margin-bottom:0;">
+        <li class="list-group-item">
+            <a href="{{:url('admin/comment/index')}}">评论列表</a>
+        </li>
+    </ul>
+</div>
+</div>
+</div>
+
+<div class="panel {{if condition='$Request.controller == " Category"'}}panel-success{{else /}}panel-info{{/if}}">
+<div class="panel-heading">
+    <a href="#category" data-toggle="collapse" data-parent="#pgroup">
+        <h3 class="panel-title">分类管理</h3>
+    </a>
+</div>
+<div id="category" class="collapse {{if condition='$Request.controller == " Category"'}}in{{/if}}">
+<div class="panel-body" style="padding:0;">
+    <ul class="list-group" style="margin-bottom:0;">
+        <li class="list-group-item">
+            <a href="{{:url('admin/category/index')}}">分类列表</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{{:url('admin/category/add')}}">添加分类</a>
+        </li>
+    </ul>
+</div>
+</div>
+</div>
+
+<div class="panel {{if condition='$Request.controller == " News"'}}panel-success{{else /}}panel-info{{/if}}">
+<div class="panel-heading">
+    <a href="#news" data-toggle="collapse" data-parent="#pgroup">
+        <h3 class="panel-title">新闻管理</h3>
+    </a>
+</div>
+<div id="news" class="collapse {{if condition='$Request.controller == " News"'}}in{{/if}}">
+<div class="panel-body" style="padding:0;">
+    <ul class="list-group" style="margin-bottom:0;">
+        <li class="list-group-item">
+            <a href="{{:url('admin/news/index')}}">新闻列表</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{{:url('admin/news/add',['id'=>1,'year'=>'2019']) }}">添加新闻</a>
+        </li>
+    </ul>
+</div>
+</div>
+</div>
+</div>

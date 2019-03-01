@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Think模板引擎</title>
+</head>
+
+<body>
+    <h1>Think模板引擎</h1>
+    <h3>数据展示</h3> {{// 这里是注释, 你看不见我}}
+    <br> {{$hi}}
+    <br> {{$user['username']}}
+    <br> {{$user.created}}
+    <br> {{$obj->username}}
+    <br> {{$obj:created}}
+    <br> {{$obj:created|date='Y-m-d H:i:s',###}}
+    <br> {{$hi|strtoupper}}
+    <br> {{$hi|strtolower}}
+    <br> {{$hi|ucfirst}}
+    <br> {{$hi|substr=7,5}}
+    <br> {{literal}} {{$hi}} {{/literal}}
+    <h3>保留变量</h3>
+    <br> {{$Think.const.CORE_PATH}}
+    <br> {{$Think.CORE_PATH}}
+    <br> {{// /index/user/tpl?a=hello}}
+    <br> {{$Think.get.a}}
+    <br> 默认控制器:{{$Think.config.default_controller}}
+    <br> 默认方法: {{$Think.config.default_action}}
+    <br> 默认分页大小: {{$Think.config.paginate.list_rows}}
+    <br> 当前模块: {{$Request.module}}
+    <br> 当前控制器: {{$Request.controller}}
+    <br> 当前方法: {{$Request.action}}
+    <br> 当前URL: {{:url($Request.module.'/'.$Request.controller . '/' .$Request.action)}}
+    <br> {{$Think.config.app_debug ? '调试模式已开启' : '调试模式已关闭'}}
+    <br> {{if condition="$Think.config.app_debug"}} 调试模式已开启 {{else /}} 调试模式已关闭 {{/if}}
+    <br>
+    <br>
+    <br>
+    <br>
+
+</body>
+
+</html>

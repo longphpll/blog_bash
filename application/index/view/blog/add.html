@@ -1,0 +1,53 @@
+{{extend name="public/base"}}
+
+{{block name="main"}}
+<div class="col-md-8">
+    <form action="{{:url('index/blog/doAdd')}}" method="post" enctype="multipart/form-data" class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">博客标题:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="title" value="" class="form-control">
+            </div>
+            <div class="col-md-5">
+                <span class="help-block">请输入博客标题</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">图片:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="file" name="image" value="" class="form-control">
+            </div>
+            <div class="col-md-5">
+                <span class="help-block">请上传图片</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                <label class="control-label">博客内容:</label>
+            </div>
+            <div class="col-md-5">
+                <textarea name="content" cols="30" rows="10" class="form-control"></textarea>
+            </div>
+            <div class="col-md-5"><span class="help-block">请输入博客内容,最多不超过255字符</span></div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-2">
+                <input type="submit" value="提交" class="btn btn-primary">
+                <input type="reset" vale="重置" class="btn btn-default">
+            </div>
+        </div>
+    </form>
+</div>
+{{/block}}
+
+{{block name="right"}}
+<div class="col-md-4">
+    {{include file="blog/right"}}
+</div>
+{{/block}}
+
+
