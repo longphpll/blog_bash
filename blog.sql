@@ -11,32 +11,140 @@
  Target Server Version : 50717
  File Encoding         : 65001
 
- Date: 27/02/2019 13:36:40
+ Date: 02/03/2019 15:57:36
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for sms_user
+-- Table structure for frame_base_program_controller
 -- ----------------------------
-DROP TABLE IF EXISTS `sms_user`;
-CREATE TABLE `sms_user`  (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `phone` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '手机',
-  `password` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '验证码',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+DROP TABLE IF EXISTS `frame_base_program_controller`;
+CREATE TABLE `frame_base_program_controller`  (
+  `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '软件类型（详见注释）',
+  `program_name` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '前端程序命名（详见remark字段内容）',
+  `status` tinyint(1) UNSIGNED NULL DEFAULT NULL COMMENT '状态，0、无效；1、有效',
+  `remark` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `version_a` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '大版本号',
+  `version_b` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '小版本号',
+  `version_code` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '版本代号（格式如“20170903AB”）',
+  `type` tinyint(2) UNSIGNED NULL DEFAULT NULL COMMENT '升级类型：0、不升级；1、升级；2、强制升级',
+  `apk_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '升级包地址',
+  `upgrade_point` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '升级提示',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `onlyOne`(`program_name`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '《软件版本控制》表\r\n\r\nprogram意味着软件里的程序，soft的概念更大一些。\r\n\r\nprogram_name中，以use_开头的表示外部用户使用的程序，以staff_开头的表示内部职员使用的程序。\r\nprogram_short命名规则，大写，长度为3字节，以每个单词首字母顺序排列，如果只有1个或2个单词的记录，则取第一个单词前面3个字母，或取第二个单词的前面2个字母，凑齐3个字母。\r\n\r\n1、前端程序命名（program_name）；\r\n2、版本代号（version_code），如“20170902”；\r\n3、升级类型（type）：0、不升级；1、升级；2、强制升级；\r\n4、状态（status）：0、有效；1、无效。这里的“有效”即指基础框架用到实际项目上之后，在该项目中开发了哪些程序类型；\r\n5、本表主要针对前端进行 程序有效性 和 版本 的管理，而对于后端由于是统一放在服务器上运行的，暂时不存在这些管理的需要；' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of sms_user
+-- Records of frame_base_program_controller
 -- ----------------------------
-INSERT INTO `sms_user` VALUES (49, '15814496494', '478130');
-INSERT INTO `sms_user` VALUES (50, '15814496494', '639187');
-INSERT INTO `sms_user` VALUES (51, '15814496494', '657843');
-INSERT INTO `sms_user` VALUES (52, '15814496494', '156238');
-INSERT INTO `sms_user` VALUES (53, '15814496494', '379065');
-INSERT INTO `sms_user` VALUES (54, '15814496494', '756891');
+INSERT INTO `frame_base_program_controller` VALUES (1, 'front_web_user', 1, '前端pc机web用户端', '0', '0', NULL, NULL, NULL, NULL);
+INSERT INTO `frame_base_program_controller` VALUES (2, 'front_web_staff', 0, '前端pc机web职员端', '1', '1', NULL, NULL, NULL, NULL);
+INSERT INTO `frame_base_program_controller` VALUES (3, 'front_web_manager', 1, '前端pc机web管理端', '0', '0', NULL, NULL, NULL, NULL);
+INSERT INTO `frame_base_program_controller` VALUES (4, 'front_mini', 0, '前端微信小程序', '1', '1', NULL, NULL, NULL, NULL);
+INSERT INTO `frame_base_program_controller` VALUES (5, 'front_official', 0, '前端微信公众号', '1', '1', NULL, NULL, NULL, NULL);
+INSERT INTO `frame_base_program_controller` VALUES (6, 'front_android_app', 0, '前端安卓app', '1', '1', '20180225AA', 1, 'http://upgrade.com', '升级测试，没有更新');
+INSERT INTO `frame_base_program_controller` VALUES (7, 'front_android_h5', 0, '前端安卓h5', '1', '1', '20180225AA', 1, 'http://upgrade.com', '升级测试，没有更新');
+INSERT INTO `frame_base_program_controller` VALUES (8, 'front_ios_app', 0, '前端苹果app', '1', '1', NULL, NULL, NULL, NULL);
+INSERT INTO `frame_base_program_controller` VALUES (9, 'front_ios_h5', 0, '前端苹果h5', '1', '1', NULL, NULL, NULL, NULL);
+INSERT INTO `frame_base_program_controller` VALUES (10, 'front_win_exe', 0, '前端win_exe', '1', '1', NULL, NULL, NULL, NULL);
+INSERT INTO `frame_base_program_controller` VALUES (11, 'front_linux_exe', 0, '前端linux_exe', '1', '1', NULL, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for frame_client_device
+-- ----------------------------
+DROP TABLE IF EXISTS `frame_client_device`;
+CREATE TABLE `frame_client_device`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `did` char(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '设备ID，\\w，意即[a-zA-Z0-9]{32}',
+  `program_name` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '前端程序缩写，对应base_program_controller里的program_short',
+  `env_string` varchar(60) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '个性化环境串，定义见接口文档',
+  `internet_ip` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '申请时的互联网IP，将来也可设置为最后一次访问时的IP',
+  `status` tinyint(4) NULL DEFAULT NULL COMMENT '状态：0、禁用（锁定）；1、正常；',
+  `last_access` datetime(0) NULL DEFAULT NULL COMMENT '最后一次访问的时间，指非锁定状态时提交DID的最后一次时间，即最后一次正常访问',
+  `access_count` int(9) UNSIGNED NULL DEFAULT NULL COMMENT '访问次数，在analyze_did($did)函数中完成写入',
+  `create_time` datetime(0) NULL DEFAULT NULL,
+  `update_time` datetime(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `did`(`did`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '《用户表-设备》\r\n\r\n1、环境属性类型（env_type），需要统一定义，暂时不用：0、设备号；1、IP地址；2、CPU序列号；3、浏览器规格' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of frame_client_device
+-- ----------------------------
+INSERT INTO `frame_client_device` VALUES (1, 'DEA_20180829141505_gOi0CYdwbNigp', 'front_web_manager', 'asdfasdfasdf', '192.168.6.3', 1, '2018-08-30 18:01:46', 37, '2018-08-29 14:15:05', '2018-08-30 18:01:46');
+INSERT INTO `frame_client_device` VALUES (2, 'DEA_20180830113754_3FZzDCAkgT5m5', 'front_web_manager', 'asdfasdfasdf', '192.168.6.3', 1, '2018-08-30 18:30:57', 12, '2018-08-30 11:37:54', '2018-08-30 18:30:57');
+INSERT INTO `frame_client_device` VALUES (3, 'DEA_20180830120411_fQccZv7tyZmDk', 'front_web_manager', 'asdfasdfasdf', '192.168.6.3', 1, NULL, 0, '2018-08-30 12:04:11', '2018-08-30 12:04:11');
+INSERT INTO `frame_client_device` VALUES (4, 'TRF_20190227164122_3AHotOdYnhFCO', 'front_web_user', '00：01：6C：06：A6：29', '192.168.8.71', 1, '2019-02-27 16:41:22', 1, '2019-02-27 16:41:22', '2019-02-27 16:41:22');
+INSERT INTO `frame_client_device` VALUES (5, 'TRF_20190227175158_E8y7fB6qN24Av', 'front_web_user', '00：01：6C：06：A6：29', '192.168.8.71', 1, '2019-02-27 17:51:58', 1, '2019-02-27 17:51:58', '2019-02-27 17:51:58');
+INSERT INTO `frame_client_device` VALUES (6, 'TRF_20190227175209_mIBUYuT809MfK', 'front_web_user', '00：01：6C：06：A6：29', '192.168.8.70', 1, '2019-02-27 17:52:09', 1, '2019-02-27 17:52:09', '2019-02-27 17:52:09');
+INSERT INTO `frame_client_device` VALUES (7, 'TRF_20190227175258_wjjrsgS1g6Lyz', 'front_web_user', '00：01：6C：06：A6：29', '192.168.8.70', 1, '2019-02-27 17:52:58', 1, '2019-02-27 17:52:58', '2019-02-27 17:52:58');
+INSERT INTO `frame_client_device` VALUES (8, 'TRF_20190227175410_vIdT4Gpe468f2', 'front_web_user', '00：01：6C：06：A6：29', '192.168.8.70', 1, '2019-02-27 17:54:10', 1, '2019-02-27 17:54:10', '2019-02-27 17:54:10');
+INSERT INTO `frame_client_device` VALUES (9, 'TRF_20190227190928_vSg0434dXnZY8', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-27 19:09:28', 1, '2019-02-27 19:09:28', '2019-02-27 19:09:28');
+INSERT INTO `frame_client_device` VALUES (10, 'TRF_20190227193546_PPuLsYZAPmGRY', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-27 19:35:46', 1, '2019-02-27 19:35:46', '2019-02-27 19:35:46');
+INSERT INTO `frame_client_device` VALUES (11, 'TRF_20190227193551_MCxcgT3wJGwUS', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-27 19:35:51', 1, '2019-02-27 19:35:51', '2019-02-27 19:35:51');
+INSERT INTO `frame_client_device` VALUES (12, 'TRF_20190227193555_G2Iv6KUEI9NEd', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-27 19:35:55', 1, '2019-02-27 19:35:55', '2019-02-27 19:35:55');
+INSERT INTO `frame_client_device` VALUES (13, 'TRF_20190227193726_dX7WYLxsbPz12', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-27 19:37:26', 1, '2019-02-27 19:37:26', '2019-02-27 19:37:26');
+INSERT INTO `frame_client_device` VALUES (14, 'TRF_20190227193757_kGq7j0issl8ok', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-27 19:37:57', 1, '2019-02-27 19:37:57', '2019-02-27 19:37:57');
+INSERT INTO `frame_client_device` VALUES (15, 'TRF_20190227211952_r8Hgc6FOLCUiY', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-27 21:19:52', 1, '2019-02-27 21:19:52', '2019-02-27 21:19:52');
+INSERT INTO `frame_client_device` VALUES (16, 'TRF_20190227212017_PsJa3Qc97nJsW', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-27 21:20:17', 1, '2019-02-27 21:20:17', '2019-02-27 21:20:17');
+INSERT INTO `frame_client_device` VALUES (17, 'TRF_20190228091624_IKhRe33HLzNi5', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 09:16:24', 1, '2019-02-28 09:16:24', '2019-02-28 09:16:24');
+INSERT INTO `frame_client_device` VALUES (18, 'TRF_20190228095005_NFOJFqiGB759k', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 09:50:05', 1, '2019-02-28 09:50:05', '2019-02-28 09:50:05');
+INSERT INTO `frame_client_device` VALUES (19, 'TRF_20190228110518_d1qjz2uJoGvrz', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 11:05:18', 1, '2019-02-28 11:05:18', '2019-02-28 11:05:18');
+INSERT INTO `frame_client_device` VALUES (20, 'TRF_20190228110534_fUOOpTlan9ypd', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 11:05:34', 1, '2019-02-28 11:05:34', '2019-02-28 11:05:34');
+INSERT INTO `frame_client_device` VALUES (21, 'TRF_20190228134316_xAExCW4eTyheE', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 13:43:16', 1, '2019-02-28 13:43:16', '2019-02-28 13:43:16');
+INSERT INTO `frame_client_device` VALUES (22, 'TRF_20190228151919_pXXHCUiK16wWd', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 15:19:19', 1, '2019-02-28 15:19:19', '2019-02-28 15:19:19');
+INSERT INTO `frame_client_device` VALUES (23, 'TRF_20190228171236_PepAmWKYaNhYc', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 17:12:36', 1, '2019-02-28 17:12:36', '2019-02-28 17:12:36');
+INSERT INTO `frame_client_device` VALUES (24, 'TRF_20190228174254_KLWt2x5tDZf3Z', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 17:42:54', 1, '2019-02-28 17:42:54', '2019-02-28 17:42:54');
+INSERT INTO `frame_client_device` VALUES (25, 'TRF_20190228201359_ORpOPJomxqFtW', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-02-28 20:13:59', 1, '2019-02-28 20:13:59', '2019-02-28 20:13:59');
+INSERT INTO `frame_client_device` VALUES (26, 'TRF_20190301081141_uKVRwUzKeQt2H', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-03-01 08:11:41', 1, '2019-03-01 08:11:41', '2019-03-01 08:11:41');
+INSERT INTO `frame_client_device` VALUES (27, 'TRF_20190301133318_pCHeJGPo8OAft', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-03-01 13:33:18', 1, '2019-03-01 13:33:18', '2019-03-01 13:33:18');
+INSERT INTO `frame_client_device` VALUES (28, 'TRF_20190301191709_bgfaDOzxn69HU', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-03-01 19:17:09', 1, '2019-03-01 19:17:09', '2019-03-01 19:17:09');
+INSERT INTO `frame_client_device` VALUES (29, 'TRF_20190301202755_GTg1PGZ1Qm1YE', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-03-01 20:27:55', 1, '2019-03-01 20:27:55', '2019-03-01 20:27:55');
+INSERT INTO `frame_client_device` VALUES (30, 'TRF_20190302085927_4qxL7qRcG8oSR', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-03-02 08:59:27', 1, '2019-03-02 08:59:27', '2019-03-02 08:59:27');
+INSERT INTO `frame_client_device` VALUES (31, 'TRF_20190302111108_iF7mHCLKhfGKI', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-03-02 11:11:08', 1, '2019-03-02 11:11:08', '2019-03-02 11:11:08');
+INSERT INTO `frame_client_device` VALUES (32, 'TRF_20190302155001_CfxyhvkTYyl2A', 'front_web_user', '00：01：6C：06：A6：29', '192.168.80.7', 1, '2019-03-02 15:50:01', 1, '2019-03-02 15:50:01', '2019-03-02 15:50:01');
+
+-- ----------------------------
+-- Table structure for log_sms
+-- ----------------------------
+DROP TABLE IF EXISTS `log_sms`;
+CREATE TABLE `log_sms`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `phone` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '手机号',
+  `password` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '短信验证码',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '此表的主要作用是将发送给非本人手机号的短信验证码记录下来,方便登录' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for tedu_admin
+-- ----------------------------
+DROP TABLE IF EXISTS `tedu_admin`;
+CREATE TABLE `tedu_admin`  (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
+  `pwd` char(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
+  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱',
+  `phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '手机号',
+  `balance` decimal(14, 2) NOT NULL DEFAULT 0.00 COMMENT '余额',
+  `created` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `admin` tinyint(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否为管理员',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `username`(`username`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tedu_admin
+-- ----------------------------
+INSERT INTO `tedu_admin` VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '645590275@qq.com', '15814496498', 0.00, 1551338054, 1);
+INSERT INTO `tedu_admin` VALUES (2, 'tom', 'e10adc3949ba59abbe56e057f20f883e', '645590275@qq.com', '15814496498', 0.00, 1551338059, 0);
+INSERT INTO `tedu_admin` VALUES (3, 'rose', 'e10adc3949ba59abbe56e057f20f883e', '645590275@qq.com', '15814496498', 0.00, 1551338063, 0);
+INSERT INTO `tedu_admin` VALUES (4, 'rose1', 'e10adc3949ba59abbe56e057f20f883e', '645590275@qq.com', '15814496498', 0.00, 1551338077, 1);
+INSERT INTO `tedu_admin` VALUES (5, 'tom1', 'e10adc3949ba59abbe56e057f20f883e', '645590275@qq.com', '15814496498', 0.00, 1551338083, 0);
+INSERT INTO `tedu_admin` VALUES (6, 'admin1', 'e10adc3949ba59abbe56e057f20f883e', '645590275@qq.com', '15814496498', 0.00, 1551338087, 0);
+INSERT INTO `tedu_admin` VALUES (7, 'admin2', 'e10adc3949ba59abbe56e057f20f883e', '645590275@qq.com', '15814496498', 0.00, 1551338109, 0);
+INSERT INTO `tedu_admin` VALUES (8, 'admin3', 'e10adc3949ba59abbe56e057f20f883e', '645590224@qq.com', '15814496495', 0.00, 1551419519, 0);
 
 -- ----------------------------
 -- Table structure for tedu_blog
@@ -52,16 +160,20 @@ CREATE TABLE `tedu_blog`  (
   `created` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `updated` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of tedu_blog
 -- ----------------------------
-INSERT INTO `tedu_blog` VALUES (27, 10, '骑士', '20190226\\caf4cc8fa1ec916fd2871a214c7b50c3.png', 'fdasfas fadsfqwerqwdfasf', 2, 1551155991, 1551155991);
-INSERT INTO `tedu_blog` VALUES (28, 10, '博客1', '20190226\\3667dde090b4be6a14e769e07738969b.png', 'js 将json字符串转换为json对象的方法解析\r\njs 将json字符串转换为json对象的方法解析\r\n将json字符串转换为json对象的方法。在数据传输过程中，json是以文本，即字符串的形式传递的，而JS操作的是JSON对象，所以，JSON对象和JSON字符串之间的相互转换是关键\r\n\r\n例如：\r\n\r\nJSON字符串:\r\nvar str1 = \'{ \"name\": \"cxh\", \"sex\": \"man\" }\'; \r\nJSON对象:\r\nvar str2 = { \"name\": \"cxh\", \"sex\": \"man\" };\r\n', 3, 1551160866, 1551160866);
-INSERT INTO `tedu_blog` VALUES (29, 10, '博客2', '20190226\\1da43bce17123b11f41270f33245f69f.png', '一、JSON字符串转换为JSON对象\r\n\r\n要使用上面的str1，必须使用下面的方法先转化为JSON对象：\r\n\r\n//由JSON字符串转换为JSON对象\r\n\r\nvar obj = eval(\'(\' + str + \')\');\r\n\r\n或者\r\n\r\nvar obj = str.parseJSON(); //由JSON字符串转换为JSON对象\r\n\r\n或者\r\n\r\nvar obj = JSON.parse(str); //由JSON字符串转换为JSON对象\r\n\r\n然后，就可以这样读取：\r\n\r\nAlert(obj.name);\r\n\r\nAlert(obj.sex);\r\n\r\n特别注意：如果obj本来就是一个JSON对象，那么使用eval（）函数转换后（哪怕是多次转换）还是JSON对象，但是使用parseJSON（）函数处理后会有问题（抛出语法异常）。\r\n\r\n二、可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串。\r\n\r\n例如：\r\n\r\nvar last=obj.toJSONString(); //将JSON对象转化为JSON字符\r\n\r\n或者\r\n\r\nvar last=JSON.stringify(obj); //将JSON对象转化为JSON字符\r\n\r\nalert(last);\r\n', 4, 1551160880, 1551160880);
-INSERT INTO `tedu_blog` VALUES (31, 10, '博客4', '20190226\\74cbb3fa6484e8f2559832ce558afff1.png', 'js 将json字符串转换为json对象的方法解析\r\njs 将json字符串转换为json对象的方法解析\r\n将json字符串转换为json对象的方法。在数据传输过程中，json是以文本，即字符串的形式传递的，而JS操作的是JSON对象，所以，JSON对象和JSON字符串之间的相互转换是关键\r\n\r\n例如：\r\n\r\nJSON字符串:\r\nvar str1 = \'{ \"name\": \"cxh\", \"sex\": \"man\" }\'; \r\nJSON对象:\r\nvar str2 = { \"name\": \"cxh\", \"sex\": \"man\" };\r\n\r\n一、JSON字符串转换为JSON对象\r\n\r\n要使用上面的str1，必须使用下面的方法先转化为JSON对象：\r\n\r\n//由JSON字符串转换为JSON对象\r\n\r\nvar obj = eval(\'(\' + str + \')\');\r\n\r\n或者\r\n\r\nvar obj = str.parseJSON(); //由JSON字符串转换为JSON对象\r\n\r\n或者\r\n\r\nvar obj = JSON.parse(str); //由JSON字符串转换为JSON对象\r\n\r\n然后，就可以这样读取：\r\n\r\nAlert(obj.name);\r\n\r\nAlert(obj.sex);\r\n\r\n特别注意：如果obj本来就是一个JSON对象，那么使用eval（）函数转换后（哪怕是多次转换）还是JSON对象，但是使用parseJSON（）函数处理后会有问题（抛出语法异常）。\r\n\r\n二、可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串。\r\n\r\n例如：\r\n\r\nvar last=obj.toJSONString(); //将JSON对象转化为JSON字符\r\n\r\n或者\r\n\r\nvar last=JSON.stringify(obj); //将JSON对象转化为JSON字符\r\n\r\nalert(last);\r\n\r\n注意：\r\n\r\n上面的几个方法中，除了eval()函数是js自带的之外，其他的几个方法都来自json.js包。新版本的 JSON 修改了 API，将 JSON.stringify() 和 JSON.parse() 两个方法都注入到了 Javascript 的内建对象里面，前者变成了 Object.toJSONString()，而后者变成了 String.parseJSON()。如果提示找不到toJSONString()和parseJSON()方法，则说明您的json包版本太低。\r\n\r\nPS：还提供了几款功能十分强大的json解析、转换与格式化工具供大家选择使用，相信对于大家接下来的json格式数据处理会有所帮助：\r\n\r\n在线JSON代码检验、检验、美化、格式化工具：\r\nhttp://tools.jb51.net/code/json', 2, 1551162201, 1551162201);
-INSERT INTO `tedu_blog` VALUES (32, 10, '博客5', '20190226\\af3b837503fb807fd1220f51aa507814.png', 'Alert(obj.sex);\r\n\r\n特别注意：如果obj本来就是一个JSON对象，那么使用eval（）函数转换后（哪怕是多次转换）还是JSON对象，但是使用parseJSON（）函数处理后会有问题（抛出语法异常）。\r\n\r\n二、可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串。\r\n\r\n例如：\r\n\r\nvar last=obj.toJSONString(); //将JSON对象转化为JSON字符\r\n\r\n或者\r\n\r\nvar last=JSON.stringify(obj); //将JSON对象转化为JSON字符\r\n', 0, 1551162492, 1551162492);
+INSERT INTO `tedu_blog` VALUES (31, 20, '博客里这个标题的id为31，测试使用4', '20190226\\74cbb3fa6484e8f2559832ce558afff1.png', 'js 将json字符串转换为json对象的方法解析\r\njs 将json字符串转换为json对象的方法解析\r\n将json字符串转换为json对象的方法。在数据传输过程中，json是以文本，即字符串的形式传递的，而JS操作的是JSON对象，所以，JSON对象和JSON字符串之间的相互转换是关键\r\n\r\n例如：\r\n\r\nJSON字符串:\r\nvar str1 = \'{ \"name\": \"cxh\", \"sex\": \"man\" }\'; \r\nJSON对象:\r\nvar str2 = { \"name\": \"cxh\", \"sex\": \"man\" };\r\n\r\n一、JSON字符串转换为JSON对象\r\n\r\n要使用上面的str1，必须使用下面的方法先转化为JSON对象：\r\n\r\n//由JSON字符串转换为JSON对象\r\n\r\nvar obj = eval(\'(\' + str + \')\');\r\n\r\n或者\r\n\r\nvar obj = str.parseJSON(); //由JSON字符串转换为JSON对象\r\n\r\n或者\r\n\r\nvar obj = JSON.parse(str); //由JSON字符串转换为JSON对象\r\n\r\n然后，就可以这样读取：\r\n\r\nAlert(obj.name);\r\n\r\nAlert(obj.sex);\r\n\r\n特别注意：如果obj本来就是一个JSON对象，那么使用eval（）函数转换后（哪怕是多次转换）还是JSON对象，但是使用parseJSON（）函数处理后会有问题（抛出语法异常）。\r\n\r\n二、可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串。\r\n\r\n例如：\r\n\r\nvar last=obj.toJSONString(); //将JSON对象转化为JSON字符\r\n\r\n或者\r\n\r\nvar last=JSON.stringify(obj); //将JSON对象转化为JSON字符\r\n\r\nalert(last);\r\n\r\n注意：\r\n\r\n上面的几个方法中，除了eval()函数是js自带的之外，其他的几个方法都来自json.js包。新版本的 JSON 修改了 API，将 JSON.stringify() 和 JSON.parse() 两个方法都注入到了 Javascript 的内建对象里面，前者变成了 Object.toJSONString()，而后者变成了 String.parseJSON()。如果提示找不到toJSONString()和parseJSON()方法，则说明您的json包版本太低。\r\n\r\nPS：还提供了几款功能十分强大的json解析、转换与格式化工具供大家选择使用，相信对于大家接下来的json格式数据处理会有所帮助：\r\n\r\n在线JSON代码检验、检验、美化、格式化工具：\r\nhttp://tools.jb51.net/code/json', 39, 1551162201, 1551162201);
+INSERT INTO `tedu_blog` VALUES (32, 20, '博客5', '20190226\\af3b837503fb807fd1220f51aa507814.png', 'Alert(obj.sex);\r\n\r\n特别注意：如果obj本来就是一个JSON对象，那么使用eval（）函数转换后（哪怕是多次转换）还是JSON对象，但是使用parseJSON（）函数处理后会有问题（抛出语法异常）。\r\n\r\n二、可以使用toJSONString()或者全局方法JSON.stringify()将JSON对象转化为JSON字符串。\r\n\r\n例如：\r\n\r\nvar last=obj.toJSONString(); //将JSON对象转化为JSON字符\r\n\r\n或者\r\n\r\nvar last=JSON.stringify(obj); //将JSON对象转化为JSON字符\r\n', 2, 1551162492, 1551162492);
+INSERT INTO `tedu_blog` VALUES (33, 20, '骑士334', '20190228\\aa206c24e96d8770299a3170830355e6.png', 'fdasfasf asfasf', 2, 1551322982, 1551322982);
+INSERT INTO `tedu_blog` VALUES (34, 20, '博客添加1', '20190228\\79d20ab8d44365aef4f8d5bf56c84d1d.png', '2019-02-28 10:07:41\r\n电话号码：15814496498\r\n短信验证码：123456\r\n图形验证码：123456\r\narray (\r\n  \'code\' => 1,\r\n  \'msg\' => \'登录成功,顺利得到登录凭证，USER_INFO已写入redis\',\r\n  \'session\' => \r\n  array (\r\n    \'USER_INFO\' => \r\n    array (\r\n      \'id\' => 13,\r\n      \'username\' => \'15814496498\',\r\n      \'created\' => \'2019-02-28 09:45:41\',\r\n      \'log_time\' => \'2019-02-28 10:07:41\',\r\n    ),\r\n  ),\r\n)\r\n', 0, 1551345590, 1551345590);
+INSERT INTO `tedu_blog` VALUES (35, 20, '博客1', '20190228\\bee1d19a1b35ed98ddc3556ed822dd2f.png', '2019-02-28 10:07:41\r\n电话号码：15814496498\r\n短信验证码：123456\r\n图形验证码：123456\r\narray (\r\n  \'code\' => 1,\r\n  \'msg\' => \'登录成功,顺利得到登录凭证，USER_INFO已写入redis\',\r\n  \'session\' => \r\n  array (\r\n    \'USER_INFO\' => \r\n    array (\r\n      \'id\' => 13,\r\n      \'username\' => \'15814496498\',\r\n      \'created\' => \'2019-02-28 09:45:41\',\r\n      \'log_time\' => \'2019-02-28 10:07:41\',\r\n    ),\r\n  ),\r\n)\r\n', 0, 1551345641, 1551345641);
+INSERT INTO `tedu_blog` VALUES (36, 20, '博客2', '20190228\\7b6da7a0af9d32dbb7fde8a239a93892.png', '2019-02-28 10:07:41\r\n电话号码：15814496498\r\n短信验证码：123456\r\n图形验证码：123456\r\narray (\r\n  \'code\' => 1,\r\n  \'msg\' => \'登录成功,顺利得到登录凭证，USER_INFO已写入redis\',\r\n  \'session\' => \r\n  array (\r\n    \'USER_INFO\' => \r\n    array (\r\n      \'id\' => 13,\r\n      \'username\' => \'15814496498\',\r\n      \'created\' => \'2019-02-28 09:45:41\',\r\n      \'log_time\' => \'2019-02-28 10:07:41\',\r\n    ),\r\n  ),\r\n)\r\n', 1, 1551345651, 1551345651);
+INSERT INTO `tedu_blog` VALUES (37, 20, '博客3', '20190228\\f1f7b50bd75319b8ff4d3e03f86a18fa.png', '2019-02-28 10:07:41\r\n电话号码：15814496498\r\n短信验证码：123456\r\n图形验证码：123456\r\narray (\r\n  \'code\' => 1,\r\n  \'msg\' => \'登录成功,顺利得到登录凭证，USER_INFO已写入redis\',\r\n  \'session\' => \r\n  array (\r\n    \'USER_INFO\' => \r\n    array (\r\n      \'id\' => 13,\r\n      \'username\' => \'15814496498\',\r\n      \'created\' => \'2019-02-28 09:45:41\',\r\n      \'log_time\' => \'2019-02-28 10:07:41\',\r\n    ),\r\n  ),\r\n)\r\n', 0, 1551345658, 1551345658);
+INSERT INTO `tedu_blog` VALUES (39, 18, '180博客1', '20190228\\37c08f2b20d8faef5ce51cf70b8f39cc.png', '电话号码：15814496498\r\n短信验证码：123456\r\n图形验证码：123456\r\narray (\r\n  \'code\' => 1,\r\n  \'msg\' => \'登录成功,顺利得到登录凭证，USER_INFO已写入redis\',\r\n  \'session\' => \r\n  array (\r\n    \'USER_INFO\' => \r\n    array (\r\n      \'id\' => 13,\r\n      \'username\' => \'15814496498\',\r\n      \'created\' => \'2019-02-28 09:45:41\',\r\n      \'log_time\' => \'2019-02-28 10:07:41\',\r\n    ),\r\n  ),\r\n)', 0, 1551347101, 1551347101);
+INSERT INTO `tedu_blog` VALUES (40, 18, '180博客', '20190228\\29069f523905d519df32e67206e83a8f.png', '18022494230 ', 1, 1551347351, 1551347382);
 
 -- ----------------------------
 -- Table structure for tedu_category
@@ -106,24 +218,33 @@ CREATE TABLE `tedu_comment`  (
   `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '评论内容',
   `created` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of tedu_comment
 -- ----------------------------
-INSERT INTO `tedu_comment` VALUES (1, 3, 'Blog', 2, '内容内容', 1532504389);
-INSERT INTO `tedu_comment` VALUES (2, 3, 'Blog', 2, '其他的评论', 1532504828);
-INSERT INTO `tedu_comment` VALUES (3, 3, 'Blog', 6, '我的第一篇评论', 1535446232);
-INSERT INTO `tedu_comment` VALUES (4, 3, 'Blog', 6, '我的第二篇评论', 1535446250);
-INSERT INTO `tedu_comment` VALUES (5, 8, 'News', 6, '新闻评论1', 1535449157);
-INSERT INTO `tedu_comment` VALUES (6, 8, 'News', 6, '新闻评论2', 1535449164);
-INSERT INTO `tedu_comment` VALUES (7, 8, 'News', 6, '新闻评论3', 1535449173);
-INSERT INTO `tedu_comment` VALUES (8, 8, 'News', 6, '新闻评论4', 1535449180);
-INSERT INTO `tedu_comment` VALUES (9, 8, 'News', 6, '新闻评论5', 1535449187);
-INSERT INTO `tedu_comment` VALUES (11, 17, 'News', 23, 'tom 的留言', 1545879300);
-INSERT INTO `tedu_comment` VALUES (12, 23, 'Blog', 23, 'tom 的留言', 1545879604);
-INSERT INTO `tedu_comment` VALUES (13, 15, 'News', 23, 'tom 的留言', 1545906369);
-INSERT INTO `tedu_comment` VALUES (14, 6, 'News', 10, 'fadsdfas', 1551156012);
+INSERT INTO `tedu_comment` VALUES (1, 31, 'Blog', 20, '内容内容', 1532504389);
+INSERT INTO `tedu_comment` VALUES (2, 31, 'Blog', 20, '其他的评论', 1532504828);
+INSERT INTO `tedu_comment` VALUES (3, 33, 'Blog', 20, '我的第一篇评论', 1535446232);
+INSERT INTO `tedu_comment` VALUES (4, 31, 'Blog', 20, '我的第二篇评论', 1535446250);
+INSERT INTO `tedu_comment` VALUES (5, 8, 'News', 20, '新闻评论1', 1535449157);
+INSERT INTO `tedu_comment` VALUES (6, 8, 'News', 20, '新闻评论2', 1535449164);
+INSERT INTO `tedu_comment` VALUES (7, 8, 'News', 20, '新闻评论3', 1535449173);
+INSERT INTO `tedu_comment` VALUES (8, 8, 'News', 20, '新闻评论4', 1535449180);
+INSERT INTO `tedu_comment` VALUES (9, 8, 'News', 20, '新闻评论5', 1535449187);
+INSERT INTO `tedu_comment` VALUES (11, 17, 'News', 20, 'tom 的留言', 1545879300);
+INSERT INTO `tedu_comment` VALUES (12, 33, 'Blog', 20, 'tom 的留言', 1545879604);
+INSERT INTO `tedu_comment` VALUES (13, 15, 'News', 20, 'tom 的留言', 1545906369);
+INSERT INTO `tedu_comment` VALUES (15, 2, 'News', 20, '15144评论留言', 1551340264);
+INSERT INTO `tedu_comment` VALUES (16, 31, 'Blog', 20, '158144博客4留言', 1551340330);
+INSERT INTO `tedu_comment` VALUES (17, 31, 'Blog', 20, '158144博客的评论4', 1551340629);
+INSERT INTO `tedu_comment` VALUES (18, 17, 'News', 20, 'a\'d\'s\'fa\'s\'d\'f', 1551340671);
+INSERT INTO `tedu_comment` VALUES (19, 17, 'News', 18, '180的新闻评论1', 1551347303);
+INSERT INTO `tedu_comment` VALUES (20, 31, 'Blog', 18, '此评论是博客里的评论', 1551347324);
+INSERT INTO `tedu_comment` VALUES (21, 31, 'News', 20, '此评论是新闻里的评论', 1551356610);
+INSERT INTO `tedu_comment` VALUES (22, 31, 'News', 20, 'fa\'d\'s\'fa\'s', 1551357720);
+INSERT INTO `tedu_comment` VALUES (23, 31, 'Blog', 20, 'dsafasfdas', 1551439092);
+INSERT INTO `tedu_comment` VALUES (24, 2, 'News', 20, 'fdsafas', 1551439102);
 
 -- ----------------------------
 -- Table structure for tedu_news
@@ -142,28 +263,31 @@ CREATE TABLE `tedu_news`  (
   `updated` int(10) UNSIGNED NOT NULL COMMENT '更新时间',
   `created` int(10) UNSIGNED NOT NULL COMMENT '添加时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '新闻表' ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '新闻表' ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of tedu_news
 -- ----------------------------
-INSERT INTO `tedu_news` VALUES (1, 20, 12, '朱婷镜头前秀英语 郎平赞其“国际朱”：亲闺女！', '8月23日下午，在2018雅加达亚运会的女排小组赛中，中国队以3-0横扫卫冕冠军韩国队。在面对记者时，中国女排主帅郎平称赞朱婷现在已经是“国际朱”了。\r\n\r\n　　在评价金软景时，郎平认为：“我觉得她，我们很多的技术各方面需要向她学习。另外，她也是在球场上能够把自己的球员紧紧地团结在一起，我觉得这样的这种领袖的位置也是非常少有的。”\r\n\r\n　　而对自己的弟子，郎导则说：“我觉得朱现在是‘国际朱’了。‘国际朱’就是在国际赛场上运用自如吧！而且英语也可以来两句。”\r\n\r\n　　在得到郎平“首肯”后，记者要求朱婷面对镜头说两句英语。“英语啊？行吧！Thanks my fans（谢谢我的球迷们），I‘m so happy you like me and China Volleyball Team（很高兴你们能够喜欢我和中国女排）！差不多了吧？（笑）”\r\n\r\n//s3.pfp.sina.net/ea/ad/8/9/c47ce2954b8ae4b7771dc163f3d8b8a0.jpg\r\n　　当然说起英语，朱婷还是对赛场术语更熟悉。“在排球上的东西可能就是教练让我做，‘朱，你拦直线’，我说‘ok’，比如说，他会告诉我‘10号球员喜欢打斜线’，我要拦她的斜线，但是我们到最后就会说简单的，就会说‘直线’，就会用‘1’来代替，然后‘斜线’就用‘2’来代替，然后‘拦中线’的话就用‘中间’（来代替）。就用这种来说。”\r\n\r\n　　这样的朱婷，也难怪郎导会用“国际朱”来形容她。要说“国际朱”到底有多大影响力，看看对手评价就知道。当被问到觉得朱婷和金软景谁是最出色的选手时，哈萨克斯坦女排队员贝洛娃和卡拉贝坦就不约而同的选择了朱婷。中国队长的影响力可见一斑。\r\n\r\n　　当被问到如果朱婷和金软景都能成为弟子是啥感觉时，郎平说：“那中国队肯定还会拿世界冠军。”\r\n\r\n　　“而如果两个只能挑一个呢？”\r\n\r\n　　“那我还是留着‘国际朱’啊！那是亲闺女那是。（自己人？）对对。” 郎导笑着说道。', '', 3, 1, 1, 1535083308, 1535083308);
-INSERT INTO `tedu_news` VALUES (2, 20, 11, '亚运会-有惊无险！中国胜哈萨克小组头名进8强', '北京时间8月23日，中国男篮迎来雅加达亚运会男篮小组赛第二个对手，首战失利的哈萨克斯坦队。刘志轩狂砍18分5篮板6助攻，小丁找回状态贡献14分，最终中国男篮以83-66战胜哈萨克斯坦男篮，以小组第一的成绩晋级八强。\r\n\r\n　　中国男篮：丁彦雨航14分2篮板3助攻2断，赵睿11分3篮板3助攻，刘志轩18分5篮板6助攻，周琦9分3篮板3盖帽，董翰林6分4篮板，孙铭徽9分5篮板4助攻，阿不都沙拉木9分11篮板，王哲林4分2篮板。哈萨克斯坦队耶尔加里得到15分7助攻3篮板。\r\n\r\n　　比赛开始，周琦里突外投砍下6分，孙铭徽连得5分，中国男篮开局打出一波13-6的攻势领先对手。哈萨克斯坦紧追其后一度将分差缩小到5分，不过中国男篮凭借大魔王周琦在内线的优势还是很快稳住局面。后半段阿不都沙拉木发飙，刘志轩三分命中，中国男篮再掀一波8-2的攻势后将分差拉开到11分。节末两队一度陷入僵持，首节结束中国男篮26-18领先哈萨克斯坦。\r\n\r\n//s3.pfp.sina.net/ea/ad/9/15/0b1661530da6e29417e86f4aa2d174d8.jpg\r\n　　次节，中国男篮继续发力，两队分差被拉开到12分。周琦今天陷入犯规怪圈，次节打了3分多钟已经身背3次犯规。随着中国男篮防守端的吃紧，哈萨克斯坦开始展开反击，球队多点开花回敬一波7-2后将比分追至25-32。后半段李楠一度遣派上董瀚麟、俞长栋的内线双塔，可惜这对组合没能顶住对手的攻势，周琦和王哲林节末先后吃到第4犯，哈萨克斯坦再掀一波12-4的进攻高潮一举在次节还剩23.8秒时将比分反超至37-36。赵睿两罚全中帮助己队重新超出，哈萨克斯坦最后压哨三分不中，半场结束中国男篮38-37领先哈萨克斯坦。\r\n\r\n　　下半场，两队一度陷入僵持，战至41平后，阿不都沙拉木和丁彦雨航先后上篮命中，周琦跟着飚中三分，中国男篮多点开花轰出一波18-2的进攻高潮，在三节还剩3分多钟将分差拉开到16分。节末哈萨克斯坦一度试图缩小比分，所幸中国男篮凭借稳固防守还是顶住攻势，刘志轩发飙命中两记三分后帮助己队将差距拉开到20分。三节结束中国男篮69-49领先哈萨克斯坦20分。\r\n\r\n　　末节，中国男篮继续发力，两队分差一度被拉开到23分。哈萨克斯坦也是竭力缩小比分，刘志轩手感爆棚三分再中，四节还剩4分多钟中国男篮77-58领先19分。后半段哈萨克斯坦命中率开始走低，再加上双方悬殊的分差和所剩无几的时间，胜负已经提早失去悬念，最终中国男篮以83-66大胜哈萨克斯坦，以小组第一的成绩晋级8强。\r\n\r\n　　中国男篮首发：丁彦雨航、刘志轩、周琦、孙铭徽、王哲林', '20180824\\993dfd1fd05faa81d43bd2c9152df9f5.jpg', 10, 1, 1, 1535090670, 1535090670);
-INSERT INTO `tedu_news` VALUES (3, 20, 3, '韦4德重返热火又添筹码 昔日逼他出走之人转性', '北京时间8月24日，据美媒体报道，热火队总裁帕特-莱利在今天接受采访时重申希望韦德能回归热火，而且他计划在近期与韦德会面并讨论未来。[韦德的未来在哪儿？在这里已重披热火3号]\r\n\r\n　　韦德是今夏自由球员，目前，他还没有决定下赛季是否继续打，但是韦德表明一点态度：如果回归，他只愿意效力热火。\r\n\r\n　　“我们和莱恩-罗斯（韦德的律师）一直保持着沟通。我知道德维恩现在在加州，并且在为新赛季做准备。所以我最近会和他进行交流。”莱利说道，“当他和李宁公司达成一份长期合同之后，我给他发了短信。我们希望他回来。还有哈斯勒姆。但我们会给他们考虑的时间。我们的年轻球员需要这两位老将。”\r\n\r\n　　莱利在采访中透露，哈斯勒姆基本确定会重返热火队。\r\n\r\n　　鉴于热火的薪金状况，他们只能给韦德提供一份1年530万美元的迷你中产，或者1年240万美元的底薪。\r\n\r\n　　“我认为迷你中产或者其他金额的合同都不是重点。重要的是（韦德）回归。”莱利强调，“即使我们有奢侈税的问题，我们也会解决。”\r\n\r\n　　（罗森）', '20180824\\d25b658e5c6af7de6ab6911b141f9a68.jpg', 18, 1, 1, 1545882648, 1535091911);
-INSERT INTO `tedu_news` VALUES (4, 20, 3, '科比晒肌肉照回应调侃和祝福 这麒麟臂充了气?', '科比在一旁配文写道：“我40岁了。感谢你们每个人的爱意和生日祝福。让我们努力使下一个十年变得比之前更好。”\r\n\r\n　　此前，科比因为身体发福遭到球迷调侃，如今看来，科比还是很在意自己的身材。', '20180824\\24dd63c66f518c449b0722020ab6f518.jpg', 11, 1, 1, 1535091963, 1535091963);
-INSERT INTO `tedu_news` VALUES (5, 20, 4, '观点:恒大欲登泰山需做好两点 鲁能防反是主基调', '稿件来源：大佬鸣的体育天地 公众号　\r\n\r\n　　在客场被亚泰绝杀后，恒大全队迅速调整好了状态，接连两场5：0的大胜就是最好的说明，积分榜上也继续紧咬着前面的球队。不过大家都清楚，更严峻的考验还在后头，从本轮比赛开始，恒大将接连面对5支位居积分榜前列的球队，其中就包括三个争冠竞争对手，明晚的对手山东鲁能泰山，则是恒大这段魔鬼赛程的第一个拦路虎。\r\n\r\n　　今年的中超是恒大自2011赛季升上中超后竞争最激烈的一次了，在其他三支争冠球队发挥都比较稳定的情况下，在强强对话中战胜竞争对手是赶超对方的好机会，也是最主动的方式。以本场比赛为例，如果恒大能战胜鲁能，就可以在积分榜上超越他们，恒大主帅卡纳瓦罗也肯定了解这点，首回合交锋恒大主场小胜，本场欲再登泰山，笔者认为恒大需做好2点：\r\n\r\n　　首先是心态要把握好，要有耐心，不要着急自乱阵脚。足球世界里，在强强对话中，犯错更少的一方获胜几率更大。鲁能目前领先恒大2分，本场能取胜当然好，打平也是他们可以接受的结果，而恒大的目标肯定是战胜对手，所以恒大球员在场上千万不要想着能一口吃下对方，情急之下反而更容易暴露出本方的破绽，而是要耐心与鲁能进行周旋，然后有针对性地打击对方的弱点，并给予一击致命。\r\n\r\n　　其次就要找准对方的弱点，想办法进行克制。鲁能原来的主力后腰姚均晟目前正随U23国足参加亚运，李霄鹏用另一位U23球员刘军帅顶替，由他与蒿俊闵搭档打双后腰。刘军帅的特点是正面防守能力很强，但转身偏慢，而鲁能的两名主力中卫吉尔和戴琳也是身材高大、高空球防守能力很强但转身回追速度偏慢的球员，笔者认为恒大可以主攻这一点，用直塞球直接打鲁能防线的身后，通过高拉特的扯动扩大鲁能防线的空隙，让塔利斯卡和保利尼奥有足够的前插空间来到鲁能的禁区内寻找得分机会。而边路的传中球要顾及吉尔和戴琳的高空防守能力，传中时绕开他们俩的防空区域选择后点效果会更好。\r\n\r\n　　在防守端，克制鲁能进攻最有效的办法就是要对鲁能的中后场进行压迫，要重点照顾塔尔德利和蒿俊闵，破坏他们与其他人的联系，让他们无法有效地进行组织，从而迫使鲁能在进攻时只能直接起大脚找佩莱，如此一来鲁能进攻的威胁性将大大降低。\r\n\r\n　　反观鲁能方面，本赛季在李霄鹏的带领下，他们的发挥尚算稳定，稳居积分榜前列，若不是被垫底的贵州双杀，他们的排位或许会更高。本赛季的鲁能呈现出守强于攻的态势，目前他们是中超失球数最少的球队，但进球数也是前5名球队中最少的。周中的足协杯比赛鲁能虽然派出了大部分主力出战，不过塔尔德利并未登场，蒿俊闵也只是替补出场，可见李霄鹏还是做了一定的保留。\r\n\r\n//s3.pfp.sina.net/ea/ad/0/9/57dede1d726568786fc0bd6bbf03186f.jpg\r\n　　在积分处于领先的情况下，本场比赛鲁能可胜也可平，因此笔者预估鲁能本场不会使用主动出击的战术，稳守反击可能会是鲁能的主基调。其中塔尔德利肯定是鲁能打反击时最主要的攻击点，但也不能忽视吴兴涵和金敬道在两条边路的跟进。尤其是金敬道，他已经从一个防守型后腰转变成一个优秀的边路突击手，佩莱在前场拿到球后，经常会给塔尔德利和金敬道做球，让他们从肋部区域突进到对手禁区内射门，恒大防线一定要注意提防。\r\n\r\n　　特别是两个边后卫，上前助攻要把握好时机和分寸，压得太上的话他们身后的空档会被鲁能打反击时利用。除此之外，鲁能还有一个杀手锏：高空球。无论是佩莱、吉尔还是戴琳，都是争顶能力很强的球员，而鲁能又有蒿俊闵这样的定位球高手，所以恒大在定位球防守时一定要加倍小心，避免重蹈上赛季在客场被鲁能逆转的覆辙。\r\n\r\n　　由于两队都有球员正代表U23国足参加亚运（恒大2人，鲁能5人），因此本场两队都只需要在首发阵容中派上一名U23球员便能满足要求了。两个强者之间的直接对话，取胜的关键除了前文所提到的心态和针对性克制外，两位主帅的斗智斗勇也十分重要，究竟卡纳瓦罗和李霄鹏谁能占得上风？谁的临场调度做得更好？待比赛见分晓。（本文由大佬鸣和阿宝共同完成）', '20180824\\e6138a353ce31d3144c533a8c0adcfb1.jpg', 6, 1, 1, 1535092020, 1535092020);
-INSERT INTO `tedu_news` VALUES (6, 20, 7, '国安与斯威中超次回合较量时间提前 因特殊原因', '足协通知称，因特殊原因，经北京赛区和北京国安俱乐部的申请，客队重庆斯威及转播商同意，将原定于9月1日进行的国安与斯威的中超联赛，调整到8月30日进行，开球时间为19：35。', '20180824\\243e4b9f31df5d0a23c8ce1e2a22f704.jpg', 20, 1, 1, 1535092069, 1535092069);
-INSERT INTO `tedu_news` VALUES (7, 20, 1, '体育下的新闻', '新闻的内容', '', 2, 0, 0, 1535093970, 1535093970);
-INSERT INTO `tedu_news` VALUES (8, 20, 3, 'NBA圈子真的小!火箭三哥点赞西蒙斯前女友玉照', '', '', 10, 1, 1, 1535361433, 1535361433);
-INSERT INTO `tedu_news` VALUES (9, 20, 3, '新浪图片-有温度的视觉体育图片体育首页新浪首页  搜索图片 左思宁  退出 唐斯为ESPN拍摄全裸写真大片', '', '', 1, 0, 1, 1535361454, 1535361454);
-INSERT INTO `tedu_news` VALUES (10, 20, 3, '神吐槽：这是我大哥科比！这是我嫂子瓦妮莎！', '', '', 3, 1, 1, 1535361468, 1535361468);
-INSERT INTO `tedu_news` VALUES (11, 20, 3, '库里大女儿长大要当篮球运动员……的厨子？', '', '', 2, 1, 1, 1535361488, 1535361488);
-INSERT INTO `tedu_news` VALUES (12, 20, 3, '娱乐圈最铁杆詹蜜实锤了！看老詹的眼神里有光', '', '', 1, 0, 1, 1535361506, 1535361506);
-INSERT INTO `tedu_news` VALUES (13, 20, 3, '姚4444明晒14年前对詹姆斯老图！这打板劈扣见过吗', '', '', 2, 0, 1, 1545885432, 1535361518);
-INSERT INTO `tedu_news` VALUES (14, 20, 3, '新浪体育 > 篮球-NBA	> 克利夫兰骑士	> 正文   高中食堂板凳全部撤掉 新闻 自由市场剩下最大的鱼340万没人要!辟谣=实锤?', '', '', 5, 0, 1, 1545885859, 1535362540);
-INSERT INTO `tedu_news` VALUES (15, 20, 3, '詹姆斯被印上纸巾12美元1套!詹蜜用还是詹用', '', '', 11, 1, 1, 1545885818, 1535362555);
-INSERT INTO `tedu_news` VALUES (16, 20, 13, '网友凌晨紧急请假：因《延禧》收官失去人生目标', '新浪娱乐讯 据台湾媒体报道，《延禧攻略》26日迎来大结局，逼哭众多死忠剧迷，更有网友“哭到无法上班”，凌晨2点多紧急请假，没想到上司还准了。\r\n\r\n　　一位网友在社交网站上透露，半夜收到工作伙伴临时请假的简讯，“今天发生一件事，我怕影响我上班心情，请问（可以）请假一天吗？……我现在眼睛好肿，可能无法出席会议。”看起来心情相当低落，原博担心地询问：“你怎么了？还好吗？……你平常很少请假的，需要协助吗？”\r\n\r\n　　结果对方回答：“因为《延禧攻略》大结局，让我哭惨，也顿时没动力上班，突然觉得失去了目标。”意想不到的理由让博主傻眼：“还以为是遇到什么突发状况！”虽然心里觉得无法接受，但还是给准假。\r\n\r\n　　该举动引起网友热烈讨论，“佩服她的勇气，居然可以说出这么离谱的理由来”、“有魏樱珞的直白”。也有许多人留言大赞经理很佛，“经理你真的人超级好”、“可见平时经理带人也带心啊，不然底下员工哪敢这么诚实？经理还有缺人吗？”', '20180827\\ee29c3d33569adcd2dbf3ad3172f9f00.jpg', 6, 1, 1, 1545885397, 1535362907);
-INSERT INTO `tedu_news` VALUES (17, 20, 13, '贝克汉姆面临发际线问题 被曝已秘密植发', '新浪娱乐讯 8月27日上午，有媒体报道称著名球星贝克汉姆已经于去年秘密植发，以解决发际线越来越高的问题。随后，贝克汉姆的发言人回应：“这是一个隐私问题。”\r\n\r\n　　英国男性的秃头问题一直为人们所津津乐道，被网友们调侃为“祖传发际线”。有外媒报道称，已经43岁的著名前足球运动员贝克汉姆“成为越来越多的接受头发移植的中年男子之一。”8月27日上午，有媒体报道称，去年贝克汉姆就已经秘密接受了头发移植，此前绒毛般的头发现在变得紧密，而且发际线也跟以前不一样，变得更加笔直。有媒体就此问题联系了贝克汉姆的发言人，对方回应道：“这是一个隐私问题。”（实习生懿娴/文）', '20180827\\8e5226177f4d840facb453c763878480.jpg', 50, 1, 1, 1545885424, 1535362942);
+INSERT INTO `tedu_news` VALUES (1, 1, 12, '朱婷镜头前秀英语 郎平赞其“国际朱”：亲闺女！', '8月23日下午，在2018雅加达亚运会的女排小组赛中，中国队以3-0横扫卫冕冠军韩国队。在面对记者时，中国女排主帅郎平称赞朱婷现在已经是“国际朱”了。\r\n\r\n　　在评价金软景时，郎平认为：“我觉得她，我们很多的技术各方面需要向她学习。另外，她也是在球场上能够把自己的球员紧紧地团结在一起，我觉得这样的这种领袖的位置也是非常少有的。”\r\n\r\n　　而对自己的弟子，郎导则说：“我觉得朱现在是‘国际朱’了。‘国际朱’就是在国际赛场上运用自如吧！而且英语也可以来两句。”\r\n\r\n　　在得到郎平“首肯”后，记者要求朱婷面对镜头说两句英语。“英语啊？行吧！Thanks my fans（谢谢我的球迷们），I‘m so happy you like me and China Volleyball Team（很高兴你们能够喜欢我和中国女排）！差不多了吧？（笑）”\r\n\r\n//s3.pfp.sina.net/ea/ad/8/9/c47ce2954b8ae4b7771dc163f3d8b8a0.jpg\r\n　　当然说起英语，朱婷还是对赛场术语更熟悉。“在排球上的东西可能就是教练让我做，‘朱，你拦直线’，我说‘ok’，比如说，他会告诉我‘10号球员喜欢打斜线’，我要拦她的斜线，但是我们到最后就会说简单的，就会说‘直线’，就会用‘1’来代替，然后‘斜线’就用‘2’来代替，然后‘拦中线’的话就用‘中间’（来代替）。就用这种来说。”\r\n\r\n　　这样的朱婷，也难怪郎导会用“国际朱”来形容她。要说“国际朱”到底有多大影响力，看看对手评价就知道。当被问到觉得朱婷和金软景谁是最出色的选手时，哈萨克斯坦女排队员贝洛娃和卡拉贝坦就不约而同的选择了朱婷。中国队长的影响力可见一斑。\r\n\r\n　　当被问到如果朱婷和金软景都能成为弟子是啥感觉时，郎平说：“那中国队肯定还会拿世界冠军。”\r\n\r\n　　“而如果两个只能挑一个呢？”\r\n\r\n　　“那我还是留着‘国际朱’啊！那是亲闺女那是。（自己人？）对对。” 郎导笑着说道。', '', 3, 1, 1, 1535083308, 1535083308);
+INSERT INTO `tedu_news` VALUES (2, 1, 11, '亚运会-有惊无险！中国胜哈萨克小组头名进8强', '北京时间8月23日，中国男篮迎来雅加达亚运会男篮小组赛第二个对手，首战失利的哈萨克斯坦队。刘志轩狂砍18分5篮板6助攻，小丁找回状态贡献14分，最终中国男篮以83-66战胜哈萨克斯坦男篮，以小组第一的成绩晋级八强。\r\n\r\n　　中国男篮：丁彦雨航14分2篮板3助攻2断，赵睿11分3篮板3助攻，刘志轩18分5篮板6助攻，周琦9分3篮板3盖帽，董翰林6分4篮板，孙铭徽9分5篮板4助攻，阿不都沙拉木9分11篮板，王哲林4分2篮板。哈萨克斯坦队耶尔加里得到15分7助攻3篮板。\r\n\r\n　　比赛开始，周琦里突外投砍下6分，孙铭徽连得5分，中国男篮开局打出一波13-6的攻势领先对手。哈萨克斯坦紧追其后一度将分差缩小到5分，不过中国男篮凭借大魔王周琦在内线的优势还是很快稳住局面。后半段阿不都沙拉木发飙，刘志轩三分命中，中国男篮再掀一波8-2的攻势后将分差拉开到11分。节末两队一度陷入僵持，首节结束中国男篮26-18领先哈萨克斯坦。\r\n\r\n//s3.pfp.sina.net/ea/ad/9/15/0b1661530da6e29417e86f4aa2d174d8.jpg\r\n　　次节，中国男篮继续发力，两队分差被拉开到12分。周琦今天陷入犯规怪圈，次节打了3分多钟已经身背3次犯规。随着中国男篮防守端的吃紧，哈萨克斯坦开始展开反击，球队多点开花回敬一波7-2后将比分追至25-32。后半段李楠一度遣派上董瀚麟、俞长栋的内线双塔，可惜这对组合没能顶住对手的攻势，周琦和王哲林节末先后吃到第4犯，哈萨克斯坦再掀一波12-4的进攻高潮一举在次节还剩23.8秒时将比分反超至37-36。赵睿两罚全中帮助己队重新超出，哈萨克斯坦最后压哨三分不中，半场结束中国男篮38-37领先哈萨克斯坦。\r\n\r\n　　下半场，两队一度陷入僵持，战至41平后，阿不都沙拉木和丁彦雨航先后上篮命中，周琦跟着飚中三分，中国男篮多点开花轰出一波18-2的进攻高潮，在三节还剩3分多钟将分差拉开到16分。节末哈萨克斯坦一度试图缩小比分，所幸中国男篮凭借稳固防守还是顶住攻势，刘志轩发飙命中两记三分后帮助己队将差距拉开到20分。三节结束中国男篮69-49领先哈萨克斯坦20分。\r\n\r\n　　末节，中国男篮继续发力，两队分差一度被拉开到23分。哈萨克斯坦也是竭力缩小比分，刘志轩手感爆棚三分再中，四节还剩4分多钟中国男篮77-58领先19分。后半段哈萨克斯坦命中率开始走低，再加上双方悬殊的分差和所剩无几的时间，胜负已经提早失去悬念，最终中国男篮以83-66大胜哈萨克斯坦，以小组第一的成绩晋级8强。\r\n\r\n　　中国男篮首发：丁彦雨航、刘志轩、周琦、孙铭徽、王哲林', '20180824\\993dfd1fd05faa81d43bd2c9152df9f5.jpg', 11, 1, 1, 1535090670, 1535090670);
+INSERT INTO `tedu_news` VALUES (3, 1, 3, '韦4德重返热火又添筹码 昔日逼他出走之人转性', '北京时间8月24日，据美媒体报道，热火队总裁帕特-莱利在今天接受采访时重申希望韦德能回归热火，而且他计划在近期与韦德会面并讨论未来。[韦德的未来在哪儿？在这里已重披热火3号]\r\n\r\n　　韦德是今夏自由球员，目前，他还没有决定下赛季是否继续打，但是韦德表明一点态度：如果回归，他只愿意效力热火。\r\n\r\n　　“我们和莱恩-罗斯（韦德的律师）一直保持着沟通。我知道德维恩现在在加州，并且在为新赛季做准备。所以我最近会和他进行交流。”莱利说道，“当他和李宁公司达成一份长期合同之后，我给他发了短信。我们希望他回来。还有哈斯勒姆。但我们会给他们考虑的时间。我们的年轻球员需要这两位老将。”\r\n\r\n　　莱利在采访中透露，哈斯勒姆基本确定会重返热火队。\r\n\r\n　　鉴于热火的薪金状况，他们只能给韦德提供一份1年530万美元的迷你中产，或者1年240万美元的底薪。\r\n\r\n　　“我认为迷你中产或者其他金额的合同都不是重点。重要的是（韦德）回归。”莱利强调，“即使我们有奢侈税的问题，我们也会解决。”\r\n\r\n　　（罗森）', '20180824\\d25b658e5c6af7de6ab6911b141f9a68.jpg', 18, 1, 1, 1545882648, 1535091911);
+INSERT INTO `tedu_news` VALUES (4, 1, 3, '科比晒肌肉照回应调侃和祝福 这麒麟臂充了气?', '科比在一旁配文写道：“我40岁了。感谢你们每个人的爱意和生日祝福。让我们努力使下一个十年变得比之前更好。”\r\n\r\n　　此前，科比因为身体发福遭到球迷调侃，如今看来，科比还是很在意自己的身材。', '20180824\\24dd63c66f518c449b0722020ab6f518.jpg', 11, 1, 1, 1535091963, 1535091963);
+INSERT INTO `tedu_news` VALUES (5, 1, 4, '观点:恒大欲登泰山需做好两点 鲁能防反是主基调', '稿件来源：大佬鸣的体育天地 公众号　\r\n\r\n　　在客场被亚泰绝杀后，恒大全队迅速调整好了状态，接连两场5：0的大胜就是最好的说明，积分榜上也继续紧咬着前面的球队。不过大家都清楚，更严峻的考验还在后头，从本轮比赛开始，恒大将接连面对5支位居积分榜前列的球队，其中就包括三个争冠竞争对手，明晚的对手山东鲁能泰山，则是恒大这段魔鬼赛程的第一个拦路虎。\r\n\r\n　　今年的中超是恒大自2011赛季升上中超后竞争最激烈的一次了，在其他三支争冠球队发挥都比较稳定的情况下，在强强对话中战胜竞争对手是赶超对方的好机会，也是最主动的方式。以本场比赛为例，如果恒大能战胜鲁能，就可以在积分榜上超越他们，恒大主帅卡纳瓦罗也肯定了解这点，首回合交锋恒大主场小胜，本场欲再登泰山，笔者认为恒大需做好2点：\r\n\r\n　　首先是心态要把握好，要有耐心，不要着急自乱阵脚。足球世界里，在强强对话中，犯错更少的一方获胜几率更大。鲁能目前领先恒大2分，本场能取胜当然好，打平也是他们可以接受的结果，而恒大的目标肯定是战胜对手，所以恒大球员在场上千万不要想着能一口吃下对方，情急之下反而更容易暴露出本方的破绽，而是要耐心与鲁能进行周旋，然后有针对性地打击对方的弱点，并给予一击致命。\r\n\r\n　　其次就要找准对方的弱点，想办法进行克制。鲁能原来的主力后腰姚均晟目前正随U23国足参加亚运，李霄鹏用另一位U23球员刘军帅顶替，由他与蒿俊闵搭档打双后腰。刘军帅的特点是正面防守能力很强，但转身偏慢，而鲁能的两名主力中卫吉尔和戴琳也是身材高大、高空球防守能力很强但转身回追速度偏慢的球员，笔者认为恒大可以主攻这一点，用直塞球直接打鲁能防线的身后，通过高拉特的扯动扩大鲁能防线的空隙，让塔利斯卡和保利尼奥有足够的前插空间来到鲁能的禁区内寻找得分机会。而边路的传中球要顾及吉尔和戴琳的高空防守能力，传中时绕开他们俩的防空区域选择后点效果会更好。\r\n\r\n　　在防守端，克制鲁能进攻最有效的办法就是要对鲁能的中后场进行压迫，要重点照顾塔尔德利和蒿俊闵，破坏他们与其他人的联系，让他们无法有效地进行组织，从而迫使鲁能在进攻时只能直接起大脚找佩莱，如此一来鲁能进攻的威胁性将大大降低。\r\n\r\n　　反观鲁能方面，本赛季在李霄鹏的带领下，他们的发挥尚算稳定，稳居积分榜前列，若不是被垫底的贵州双杀，他们的排位或许会更高。本赛季的鲁能呈现出守强于攻的态势，目前他们是中超失球数最少的球队，但进球数也是前5名球队中最少的。周中的足协杯比赛鲁能虽然派出了大部分主力出战，不过塔尔德利并未登场，蒿俊闵也只是替补出场，可见李霄鹏还是做了一定的保留。\r\n\r\n//s3.pfp.sina.net/ea/ad/0/9/57dede1d726568786fc0bd6bbf03186f.jpg\r\n　　在积分处于领先的情况下，本场比赛鲁能可胜也可平，因此笔者预估鲁能本场不会使用主动出击的战术，稳守反击可能会是鲁能的主基调。其中塔尔德利肯定是鲁能打反击时最主要的攻击点，但也不能忽视吴兴涵和金敬道在两条边路的跟进。尤其是金敬道，他已经从一个防守型后腰转变成一个优秀的边路突击手，佩莱在前场拿到球后，经常会给塔尔德利和金敬道做球，让他们从肋部区域突进到对手禁区内射门，恒大防线一定要注意提防。\r\n\r\n　　特别是两个边后卫，上前助攻要把握好时机和分寸，压得太上的话他们身后的空档会被鲁能打反击时利用。除此之外，鲁能还有一个杀手锏：高空球。无论是佩莱、吉尔还是戴琳，都是争顶能力很强的球员，而鲁能又有蒿俊闵这样的定位球高手，所以恒大在定位球防守时一定要加倍小心，避免重蹈上赛季在客场被鲁能逆转的覆辙。\r\n\r\n　　由于两队都有球员正代表U23国足参加亚运（恒大2人，鲁能5人），因此本场两队都只需要在首发阵容中派上一名U23球员便能满足要求了。两个强者之间的直接对话，取胜的关键除了前文所提到的心态和针对性克制外，两位主帅的斗智斗勇也十分重要，究竟卡纳瓦罗和李霄鹏谁能占得上风？谁的临场调度做得更好？待比赛见分晓。（本文由大佬鸣和阿宝共同完成）', '20180824\\e6138a353ce31d3144c533a8c0adcfb1.jpg', 6, 1, 1, 1535092020, 1535092020);
+INSERT INTO `tedu_news` VALUES (6, 2, 7, '国安与斯威中超次回合较量时间提前 因特殊原因', '足协通知称，因特殊原因，经北京赛区和北京国安俱乐部的申请，客队重庆斯威及转播商同意，将原定于9月1日进行的国安与斯威的中超联赛，调整到8月30日进行，开球时间为19：35。', '20180824\\243e4b9f31df5d0a23c8ce1e2a22f704.jpg', 25, 1, 1, 1535092069, 1535092069);
+INSERT INTO `tedu_news` VALUES (7, 2, 1, '体育下的新闻', '新闻的内容', '', 2, 0, 0, 1535093970, 1535093970);
+INSERT INTO `tedu_news` VALUES (8, 2, 3, 'NBA圈子真的小!火箭三哥点赞西蒙斯前女友玉照', '', '', 10, 1, 1, 1535361433, 1535361433);
+INSERT INTO `tedu_news` VALUES (9, 1, 3, '新浪图片-有温度的视觉体育图片体育首页新浪首页  搜索图片 左思宁  退出 唐斯为ESPN拍摄全裸写真大片', '', '', 1, 0, 1, 1535361454, 1535361454);
+INSERT INTO `tedu_news` VALUES (10, 1, 3, '神吐槽：这是我大哥科比！这是我嫂子瓦妮莎！', '', '', 5, 1, 1, 1535361468, 1535361468);
+INSERT INTO `tedu_news` VALUES (11, 2, 3, '库里大女儿长大要当篮球运动员……的厨子？', '', '', 5, 1, 1, 1535361488, 1535361488);
+INSERT INTO `tedu_news` VALUES (12, 1, 3, '娱乐圈最铁杆詹蜜实锤了！看老詹的眼神里有光', '', '', 1, 0, 1, 1535361506, 1535361506);
+INSERT INTO `tedu_news` VALUES (13, 2, 3, '姚4444明晒14年前对詹姆斯老图！这打板劈扣见过吗', '', '', 2, 0, 1, 1545885432, 1535361518);
+INSERT INTO `tedu_news` VALUES (14, 1, 3, '新浪体育 > 篮球-NBA	> 克利夫兰骑士	> 正文   高中食堂板凳全部撤掉 新闻 自由市场剩下最大的鱼340万没人要!辟谣=实锤?', '', '', 5, 0, 1, 1545885859, 1535362540);
+INSERT INTO `tedu_news` VALUES (15, 1, 3, '詹姆斯被印上纸巾12美元1套!詹蜜用还是詹用', '', '', 20, 1, 1, 1545885818, 1535362555);
+INSERT INTO `tedu_news` VALUES (16, 2, 13, '网友凌晨紧急请假：因《延禧》收官失去人生目标', '新浪娱乐讯 据台湾媒体报道，《延禧攻略》26日迎来大结局，逼哭众多死忠剧迷，更有网友“哭到无法上班”，凌晨2点多紧急请假，没想到上司还准了。\r\n\r\n　　一位网友在社交网站上透露，半夜收到工作伙伴临时请假的简讯，“今天发生一件事，我怕影响我上班心情，请问（可以）请假一天吗？……我现在眼睛好肿，可能无法出席会议。”看起来心情相当低落，原博担心地询问：“你怎么了？还好吗？……你平常很少请假的，需要协助吗？”\r\n\r\n　　结果对方回答：“因为《延禧攻略》大结局，让我哭惨，也顿时没动力上班，突然觉得失去了目标。”意想不到的理由让博主傻眼：“还以为是遇到什么突发状况！”虽然心里觉得无法接受，但还是给准假。\r\n\r\n　　该举动引起网友热烈讨论，“佩服她的勇气，居然可以说出这么离谱的理由来”、“有魏樱珞的直白”。也有许多人留言大赞经理很佛，“经理你真的人超级好”、“可见平时经理带人也带心啊，不然底下员工哪敢这么诚实？经理还有缺人吗？”', '20180827\\ee29c3d33569adcd2dbf3ad3172f9f00.jpg', 10, 1, 1, 1545885397, 1535362907);
+INSERT INTO `tedu_news` VALUES (17, 1, 13, '贝克汉姆面临发际线问题 被曝已秘密植发', '新浪娱乐讯 8月27日上午，有媒体报道称著名球星贝克汉姆已经于去年秘密植发，以解决发际线越来越高的问题。随后，贝克汉姆的发言人回应：“这是一个隐私问题。”\r\n\r\n　　英国男性的秃头问题一直为人们所津津乐道，被网友们调侃为“祖传发际线”。有外媒报道称，已经43岁的著名前足球运动员贝克汉姆“成为越来越多的接受头发移植的中年男子之一。”8月27日上午，有媒体报道称，去年贝克汉姆就已经秘密接受了头发移植，此前绒毛般的头发现在变得紧密，而且发际线也跟以前不一样，变得更加笔直。有媒体就此问题联系了贝克汉姆的发言人，对方回应道：“这是一个隐私问题。”（实习生懿娴/文）', '20180827\\8e5226177f4d840facb453c763878480.jpg', 80, 1, 1, 1551344236, 1535362942);
+INSERT INTO `tedu_news` VALUES (18, 2, 1, '添加新闻测试1', '<p>2019-02-28 10:07:41</p><p>电话号码：15814496498</p><p>短信验证码：123456</p><p>图形验证码：123456</p><p>array (</p><p>&nbsp; &#39;code&#39; =&gt; 1,</p><p>&nbsp; &#39;msg&#39; =&gt; &#39;登录成功,顺利得到登录凭证，USER_INFO已写入redis&#39;,</p><p>&nbsp; &#39;session&#39; =&gt;&nbsp;</p><p>&nbsp; array (</p><p>&nbsp; &nbsp; &#39;USER_INFO&#39; =&gt;&nbsp;</p><p><br/></p>', '20190228\\88349e4c78f33d0eb68da0ec3f296f66.png', 2, 0, 1, 1551344643, 1551344643);
+INSERT INTO `tedu_news` VALUES (20, 2, 1, '添加新闻2', '<p>2019-02-28 10:07:41</p><p>电话号码：15814496498</p><p>短信验证码：123456</p><p>图形验证码：123456</p><p>array (</p><p>&nbsp; &#39;code&#39; =&gt; 1,</p><p>&nbsp; &#39;msg&#39; =&gt; &#39;登录成功,顺利得到登录凭证，USER_INFO已写入redis&#39;,</p><p>&nbsp; &#39;session&#39; =&gt;&nbsp;</p><p>&nbsp; array (</p><p>&nbsp; &nbsp; &#39;USER_INFO&#39; =&gt;&nbsp;</p><p>&nbsp; &nbsp; array (</p><p>&nbsp; &nbsp; &nbsp; &#39;id&#39; =&gt; 13,</p><p>&nbsp; &nbsp; &nbsp; &#39;username&#39; =&gt; &#39;15814496498&#39;,</p><p>&nbsp; &nbsp; &nbsp; &#39;created&#39; =&gt; &#39;2019-02-28 09:45:41&#39;,</p><p>&nbsp; &nbsp; &nbsp; &#39;log_time&#39; =&gt; &#39;2019-02-28 10:07:41&#39;,</p><p>&nbsp; &nbsp; ),</p><p>&nbsp; ),</p><p>)</p><p><br/></p>', '20190228\\d769b5ecd84c952f62215fd9131f968f.png', 2, 0, 1, 1551345153, 1551345153);
+INSERT INTO `tedu_news` VALUES (31, 1, 1, '新闻里的所属内容，测试使用4', '<pre style=\"background-color:#272822;color:#f8f8f2;font-family:&#39;Fira Code&#39;;font-size:15.0pt;\"><span style=\"color:#32cd32;\">//</span><span style=\"color:#32cd32;font-family:&#39;宋体&#39;;\">方式一：在模板文件通过</span><span style=\"color:#32cd32;\">js</span><span style=\"color:#32cd32;font-family:&#39;宋体&#39;;\">转换格式</span><span style=\"color:#32cd32;\"> /18_news/tp5/public/admin/comment/index/comment_id/username/content/tom<br/></span><span style=\"color:#32cd32;\">//</span><span style=\"color:#32cd32;font-family:&#39;宋体&#39;;\">注意表单提交方式为</span><span style=\"color:#32cd32;\"> button</span></pre><p><br/></p>', '20190228\\9b88216d50676a25577ecf51d2cb6e60.png', 5, 0, 1, 1551356545, 1551356545);
 
 -- ----------------------------
 -- Table structure for tedu_region
@@ -3461,70 +3585,21 @@ INSERT INTO `tedu_region` VALUES (1833275, 1000371, '静海县', '/1000001/10003
 INSERT INTO `tedu_region` VALUES (1833276, 1000371, '蓟县', '/1000001/1000371/', 'J', 3, 1500603102);
 
 -- ----------------------------
--- Table structure for tedu_test
--- ----------------------------
-DROP TABLE IF EXISTS `tedu_test`;
-CREATE TABLE `tedu_test`  (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `uid` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户id',
-  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '博客题目',
-  `image` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '博客图片',
-  `content` mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '内容',
-  `view` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '阅读量',
-  `created` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `updated` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
 -- Table structure for tedu_user
 -- ----------------------------
 DROP TABLE IF EXISTS `tedu_user`;
 CREATE TABLE `tedu_user`  (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
-  `password` char(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码',
-  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '邮箱',
-  `phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '手机号',
-  `balance` decimal(14, 2) NOT NULL DEFAULT 0.00 COMMENT '余额',
-  `created` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `admin` tinyint(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否为管理员',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of tedu_user
--- ----------------------------
-INSERT INTO `tedu_user` VALUES (1, 'mike', 'e10adc3949ba59abbe56e057f20f883e', 'sadfsadfs@qq.com', '123456465', 20.00, 1532334676, 0);
-INSERT INTO `tedu_user` VALUES (2, 'xiaoxin', '9cbf8a4dcb8e30682b927f352d6559a0', '1241233@qq.com', '13878789988', 9999.00, 1532398876, 1);
-INSERT INTO `tedu_user` VALUES (3, 'chiji', '9cbf8a4dcb8e30682b927f352d6559a0', 'asdfsfa@qq.com', '13657788997', 10000.00, 1532398959, 0);
-INSERT INTO `tedu_user` VALUES (5, 'root', '9cbf8a4dcb8e30682b927f352d6559a0', 'sadfsafsa@qq.com', '13688778877', 10000.00, 1532509523, 0);
-INSERT INTO `tedu_user` VALUES (6, '张三丰', 'e99a18c428cb38d5f260853678922e03', '563456645@qq.com', '13899887788', 100.00, 1533718374, 0);
-INSERT INTO `tedu_user` VALUES (8, '张翠山', 'e99a18c428cb38d5f260853678922e03', '563456645@qq.com', '13888778899', 100.00, 1533718496, 0);
-INSERT INTO `tedu_user` VALUES (9, 'test_23703', 'e99a18c428cb38d5f260853678922e03', 'test@qq.com', '17777777777', 20.00, 1534233829, 0);
-INSERT INTO `tedu_user` VALUES (13, 'test_93425', 'e99a18c428cb38d5f260853678922e03', 'test@qq.com', '17777777777', 100.00, 1534235711, 0);
-INSERT INTO `tedu_user` VALUES (14, 'test_34076', 'e99a18c428cb38d5f260853678922e03', 'test@qq.com', '17777777777', 100.00, 1534235711, 0);
-INSERT INTO `tedu_user` VALUES (18, '张翠山3', 'e99a18c428cb38d5f260853678922e03', '563456645@qq.com', '13888778899', 0.00, 0, 0);
-INSERT INTO `tedu_user` VALUES (20, 'admin', '0192023a7bbd73250516f069df18b500', '', '', 0.00, 1534758498, 1);
-INSERT INTO `tedu_user` VALUES (21, 'zhangsan', 'e99a18c428cb38d5f260853678922e03', '', '13888778899', 0.00, 1534815167, 0);
-INSERT INTO `tedu_user` VALUES (23, 'tom', 'e10adc3949ba59abbe56e057f20f883e', '645590224@qq.com', '15814496494', 50.00, 1545875755, 1);
-
--- ----------------------------
--- Table structure for tedu_user_sms
--- ----------------------------
-DROP TABLE IF EXISTS `tedu_user_sms`;
-CREATE TABLE `tedu_user_sms`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `phone` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '手机',
   `created` int(10) UNSIGNED NOT NULL COMMENT '创建时间',
   `log_time` int(10) UNSIGNED NOT NULL COMMENT '登录时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表,登录即注册' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of tedu_user_sms
+-- Records of tedu_user
 -- ----------------------------
-INSERT INTO `tedu_user_sms` VALUES (10, '15814496494', 1551153083, 1551164490);
+INSERT INTO `tedu_user` VALUES (18, '18022494230', 1551347084, 1551347084);
+INSERT INTO `tedu_user` VALUES (20, '15814496494', 1551338373, 1551488396);
 
 SET FOREIGN_KEY_CHECKS = 1;
