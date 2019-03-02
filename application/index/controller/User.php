@@ -22,8 +22,8 @@ class User extends IndexBase
      * 注意: 前置操作中的排除或包含的方法名,要写成小写
      */
     protected $beforeActionList = [
-        'checkDid' => ['except' => 'login,dologin,verify,logout'],
-        //除了 login,verify 和 delogin 方法外,其它都执行 checkAdmin() 方法
+        'checkDid' => ['except' => 'login,dologin,verify,logout,checkcaptcha'],
+        //除了 login,verify 和 delogin checkCaptcha 方法外,其它都执行 checkDid() 方法
     ];
 
     protected function checkDid()
@@ -247,7 +247,7 @@ class User extends IndexBase
         session('user', $user_array);
         //2、登录保持，在服务器端 redis 中以带有效期的 string 数据类型对用户登录状态进行记录；
         //将用户信息写入 redis //分别为：DID 对应的用户信息，电话号码对应的 DID
-//        $this->redis->set('TRF_DID_' . $this->datas['DID'], $user_array, 3);//3s
+//        $this->redis->set('TRF_DID_' . $this->datas['DID'], $user_array, 10);//3s
         $this->redis->set('TRF_DID_' . $this->datas['DID'], $user_array, 1800);//30分钟
         //登录成功后如果did超过30分钟，did过期
         $this->redis->set('TRF_PHONE_' . $user_array['username'], $this->datas['DID'], 1800);
